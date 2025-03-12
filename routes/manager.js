@@ -1,15 +1,15 @@
 const express = require('express');
 const Utilisateur = require('../models/Utilisateur');
 const authMiddleware = require('../middlewares/auth');
-const managerMiddleware = require('../middlewares/role');
+const {managerMiddleware} = require('../middlewares/role');
 
 const router = express.Router();
-// Modifier le rôle d'un utilisateur (seulement accessible aux admins)
+
 router.put('/update-role/:id', authMiddleware, managerMiddleware, async (req, res) => {
     try {
         const { role } = req.body;
         const allowedRoles = ['client', 'mecanicien', 'manager'];
-
+        
         if (!allowedRoles.includes(role)) {
             return res.status(400).json({ message: 'Rôle invalide' });
         }
@@ -25,3 +25,5 @@ router.put('/update-role/:id', authMiddleware, managerMiddleware, async (req, re
         res.status(500).json({ message: 'Erreur serveur' });
     }
 });
+
+module.exports = router;

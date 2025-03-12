@@ -7,9 +7,9 @@ exports.register = async (req, res) => {
         const { nom, email, contact, password } = req.body;
         const user = new Utilisateur({ nom, email, contact, password });
         await user.save();
-        res.status(201).json({ message: 'Utilisateur créé !' });
+        res.status(201).json({ message: 'Utilisateur créé !',user : {id: user._id, username: user.username, email: user.email, role: user.role } });
     } catch (error) {
-        res.status(500).json({ message: 'Erreur serveur' });
+        res.status(500).json({ message: "Erreur lors de la création de l'utilisateur "});
     }
 };
 
@@ -27,6 +27,6 @@ exports.login = async (req, res) => {
 
         res.json({ token, user: { id: user._id, username: user.username, email: user.email, role: user.role } });
     } catch (error) {
-        res.status(500).json({ message: 'Erreur serveur' });
+        res.status(500).json({ message: 'Erreur lors du login' });
     }
 };
