@@ -12,5 +12,4 @@ const managerMiddleware = (req, res, next) => {
     next();
 };
 
-
 module.exports = {mecanicienMiddleware,managerMiddleware};
