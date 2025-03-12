@@ -1,0 +1,9 @@
+npm init (npm install)
+npm install eslint --save-dev
+npm install express mongoose cors dotenv body-parser
+npm install --save-dev nodemon
+npm install jsonwebtoken bcryptjs   
+
+// génération de clé sécurisée
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+
