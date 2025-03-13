@@ -7,7 +7,7 @@ const authRoutes = require('./routes/auth')
 const clientRoutes = require('./routes/client')
 const mecanicienRoutes = require('./routes/mecanicien')
 const managerRoutes = require('./routes/manager')
-
+// const Vehicule = require('./models/Vehicule')
 const app = express();
 const PORT = process.env.PORT || 5000;
 
