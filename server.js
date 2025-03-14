@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth')
 const clientRoutes = require('./routes/client')
 const mecanicienRoutes = require('./routes/mecanicien')
 const managerRoutes = require('./routes/manager')
+const tacheRoutes = require('./routes/tache');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,5 +23,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/client', clientRoutes);
 app.use('/api/mecanicien', mecanicienRoutes);
 app.use('/api/manager', managerRoutes);
+app.use('/api/tache', tacheRoutes);
 
 app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));
