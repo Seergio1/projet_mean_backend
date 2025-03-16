@@ -29,7 +29,7 @@ exports.validerRendezVous = async (req, res) => {
     try {
         // Récupérer les données envoyées dans le corps de la requête
         const { managerId, mecanicienId } = req.body;
-        const rendezVousId = req.param.rendezVousId
+        const rendezVousId = req.params.rendezVousId
 
         // Vérification des données nécessaires
         if (!mecanicienId || !managerId || !rendezVousId) {

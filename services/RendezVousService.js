@@ -2,6 +2,7 @@ const RendezVous = require('../models/RendezVous');
 const Utilisateur = require('../models/Utilisateur');
 const Service = require('../models/Service');
 const Tache = require('../models/Tache');
+const {getDateFin} = require('../services/TacheService')
 
 
 async function prendreRendezVous(clientId, date, servicesIds) {
@@ -77,7 +78,8 @@ async function prendreRendezVous(clientId, date, servicesIds) {
         libelle: "Travail à réaliser sur le véhicule", // Description de la tâche, tu peux personnaliser
         prix: rendezVous.services.reduce((total, service) => total + service.prix, 0), // Calcul du prix à partir des services
         etat: 'en attente', // L'état initial de la tâche
-        date: rendezVous.date // Date du rendez-vous pour la tâche
+        date_debut: rendezVous.date, // Date du rendez-vous pour la tâche
+        date_fin : getDateFin(rendezVous)
       });
   
       // Sauvegarder la tâche
