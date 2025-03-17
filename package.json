@@ -33,6 +33,7 @@
     "moment-timezone": "^0.5.47",
     "mongoose": "^8.12.1",
     "node-cron": "^3.0.3",
+    "projet_mean_backend": "file:",
     "socket.io": "^4.8.1"
   }
 }

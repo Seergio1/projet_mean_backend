@@ -2,8 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('./config/db');
 const cors = require('cors');
-const socketIo = require("socket.io");
-const cron = require("node-cron");
+// const socketIo = require("socket.io");
+// const cron = require("node-cron");
 
 const authRoutes = require('./routes/auth')
 const clientRoutes = require('./routes/client')
