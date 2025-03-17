@@ -3,15 +3,15 @@ const {prendreRendezVous,validerRendezVous} = require('../services/RendezVousSer
 exports.prendreRendezVous = async (req, res) => {
     try {
         // Récupérer les données envoyées dans le corps de la requête
-        const { clientId, date, servicesIds } = req.body;
+        const { clientId, date, servicesIds, vehiculeId } = req.body;
 
         // Vérification des données nécessaires
-        if (!clientId || !date || !servicesIds || servicesIds.length === 0) {
+        if (!clientId || !date || !servicesIds || !vehiculeId || servicesIds.length === 0) {
             return res.status(400).json({ message: "Tous les champs sont requis" });
         }
 
         // Appeler le service pour prendre un rendez-vous
-        const result = await prendreRendezVous(clientId, date, servicesIds);
+        const result = await prendreRendezVous(clientId, date,vehiculeId, servicesIds);
 
         // Si tout se passe bien, renvoyer une réponse avec succès
         res.status(201).json({ message: "Rendez-vous pris avec succès", data: result });

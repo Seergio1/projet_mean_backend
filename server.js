@@ -31,21 +31,21 @@ app.use('/api/client', clientRoutes);
 app.use('/api/mecanicien', mecanicienRoutes);
 app.use('/api/manager', managerRoutes);
 
-// Mise à jour du cron pour enregistrer la notif en BD
-cron.schedule("0 9 * * *", async () => {
-    console.log("📢 Vérification des rendez-vous à notifier...");
+// // Mise à jour du cron pour enregistrer la notif en BD
+// cron.schedule("0 9 * * *", async () => {
+//     console.log("📢 Vérification des rendez-vous à notifier...");
 
-    const appointments = await getUpcomingAppointments();
+//     const appointments = await getUpcomingAppointments();
 
-    for (const appointment of appointments) {
-        const client = appointment.id_client;
-        const message = "Votre rendez-vous est prévu dans 24h !";
+//     for (const appointment of appointments) {
+//         const client = appointment.id_client;
+//         const message = "Votre rendez-vous est prévu dans 24h !";
 
-        await sendEmailNotification("giorakotomalala@gmail.com","Test mail","Le contenu de l'email")
-        await createNotification(client, appointment, message);
-    }
+//         await sendEmailNotification("giorakotomalala@gmail.com","Test mail","Le contenu de l'email")
+//         await createNotification(client, appointment, message);
+//     }
 
-    console.log(`✅ ${appointments.length} notifications envoyées.`);
-});
+//     console.log(`✅ ${appointments.length} notifications envoyées.`);
+// });
 
 app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));

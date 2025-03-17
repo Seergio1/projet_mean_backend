@@ -1,3 +1,7 @@
+const RendezVous = require("../models/RendezVous");
+const Tache = require("../models/Tache");
+const { getDateSansDecalageHoraire, getDateFin_ } = require("./Utils");
+
 function getDateFin(rendezVous){
     const allServices = rendezVous.services;
     
@@ -5,8 +9,43 @@ function getDateFin(rendezVous){
     allServices.forEach(service => {
             total += service.duree;  
     });
-    return rendezVous.date.setMilliseconds(date.getMilliseconds() + minutesToAdd * 60 * 1000);
+
+    // Créer une nouvelle date pour éviter de modifier l'original
+    let dateFin = new Date(rendezVous.date);
+    // console.log(total);
+    
+    // console.log(dateFin);
+    dateFin.setMilliseconds(dateFin.getMilliseconds() + total * 60 * 1000);
+    
+    
+    return dateFin;
+}
+
+async function updateEtatTache(id_tache,newEtat) {
+    try {
+        const tache = await Tache.findById(id_tache);
+        if (!tache) return res.status(404).json({ message: 'Tâche introuvable' });
+        const rdv = await RendezVous.findById(tache.id_rendez_vous).populate("services");
+        if (!rdv) return res.status(404).json({ message: 'Rendez vous introuvable' });
+        
+        const date_now = getDateSansDecalageHoraire(new Date(Date.now()));
+        const date_fin = getDateFin_(rdv,date_now);
+        
+        tache.etat = newEtat;
+        tache.date_debut = date_now;
+        tache.date_fin = date_fin;
+        
+        
+        
+        
+        // await tache.save();
+
+    } catch (error) {
+        throw new Error(error)
+    }
+    
 }
 
 
-module.exports = {getDateFin};
+
+module.exports = {getDateFin,updateEtatTache};
