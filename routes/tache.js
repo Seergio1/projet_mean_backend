@@ -5,11 +5,16 @@ const {mecanicienMiddleware} = require('../middlewares/role');
 
 const router = express.Router();
 
+// get liste taches by id_mecanicien
 router.get('/taches', authMiddleware, mecanicienMiddleware, async (req, res) => {
     try {
         const idUtilisateur = req.user.id;
         console.log(idUtilisateur);
-        const taches = await Tache.find ({ id_mecanicien: idUtilisateur });
+        const taches = await Tache.find ({ $and : [
+            { id_mecanicien: idUtilisateur },
+            { etat : { $gte : 0 } } // $lte 
+        ]
+    });
 
         res.status(200).json(taches);
     } catch (error) {
@@ -17,6 +22,7 @@ router.get('/taches', authMiddleware, mecanicienMiddleware, async (req, res) => 
     }
 });
 
+// assigner un nouveau tache
 router.put('/tache', authMiddleware, mecanicienMiddleware, async (req, res) => {
     try {
         const id_mecanicien = req.user.id;
@@ -31,4 +37,23 @@ router.put('/tache', authMiddleware, mecanicienMiddleware, async (req, res) => {
     }
 });
 
-module.exports = router;
+// update tache
+router.put('/:id', authMiddleware, mecanicienMiddleware, async (req, res) => {
+    try {
+        const updateTache = await Tache.findByIdAndUpdate(req.params.id, req.body, { new: true});
+        res.status(201).json(updateTache);
+    } catch (error) {
+        res.status(500).json({ message: "erreur update tache", error});
+    } 
+});
+
+const sommeDurer = (services) => {
+    let durer = 0;
+    services.forEach((service) => {
+        durer += service.durer;
+    });
+
+    return durer;
+};
+
+module.exports = {router, sommeDurer};
