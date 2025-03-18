@@ -91,7 +91,7 @@ async function validerRendezVous(managerId, rendezVousId, mecanicienId) {
         id_mecanicien: mecanicien._id,
         id_vehicule: rendezVous.id_vehicule,
         id_rendez_vous: rendezVous._id,
-        libelle: "Travail à réaliser sur le véhicule", // Description de la tâche, tu peux personnaliser
+        libelle: "Travail à réaliser sur le véhicule "+rendezVous.id_vehicule, // Description de la tâche, tu peux personnaliser
         prix: rendezVous.services.reduce(
           (total, service) => total + service.prix,
           0
