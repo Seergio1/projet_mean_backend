@@ -119,7 +119,7 @@ const getStockAvecDetails = async (id_Article) => {
                     totalSortie: { $sum: { $ifNull: ["$mouvements.sortie", 0] } }
                 }
             }
-        ]);
+        ]).sort({ totalSortie: -1 });
 
         // return result.length ? result[0] : { _id: id_Article, totalEntrer: 0, totalSortie: 0 };
         return result.length ? result : [];
