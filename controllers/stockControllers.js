@@ -27,3 +27,18 @@ exports.insertMouvementStock = async (req, res) => {
         res.status(500).json({ message: "erreur insert Mouvement Stock", error});
     }
 };
+
+exports.getMouvementArticle = async (req, res) => {
+    try {
+        const {id_Article} = req.body;
+
+        const mouvementArticle = await stockService.getStockAvecDetails(id_Article);
+
+        res.status(201).json({ message: "get mouvement article succes", data : mouvementArticle});
+
+    } catch (error) {
+        console.error("erreur insert mouvement stock", error);
+
+        res.status(500).json({ message: "get mouvement article Stock", error});
+    }
+};

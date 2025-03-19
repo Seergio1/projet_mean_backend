@@ -1,5 +1,6 @@
 const Article = require("../models/Article");
 const MouvementStock = require("../models/MouvementStock");
+const mongoose = require('mongoose');
 
 async function getAllMouvementStock() {
     let resultat = null;
@@ -39,6 +40,14 @@ async function insertMouvementStock(type, nombre, date, id_Article) {
             });
         } else {
             console.log("insertion sortie de stock");
+            
+            const details = await getStockAvecDetailsByArticle(id_Article);
+            console.log(details);
+            let difference = details.totalEntrer - details.totalSortie;
+            console.log(difference);
+            let reste = difference - nombre;
+            if (reste < 0) throw new Error("nombre en stock insuffisant");
+
             newMouvementStock = new MouvementStock({
                 id_Article : art._id, 
                 date : date || undefined, 
@@ -60,4 +69,100 @@ async function insertMouvementStock(type, nombre, date, id_Article) {
     }
 }
 
-module.exports = {getAllMouvementStock, insertMouvementStock};
+async function getStockArticle(id_Article) {
+    try {
+        console.log(id_Article);
+        const result = await MouvementStock.aggregate([
+            {
+                $match: { id_Article: new mongoose.Types.ObjectId(id_Article) } // Filtrer par id_Article
+            },
+            {
+                $group: {
+                    _id: "$id_Article",
+                    totalEntrer: { $sum: "$entrer" },
+                    totalSortie: { $sum: "$sortie" }
+                }
+            }
+        ]);
+
+        console.log(result);
+
+        return result.length > 0 ? result[0] : {_id: id_Article, totalEntrer: 0, totalSortie: 0 }; // Retourne l'objet ou null si pas de données
+    } catch (error) {
+        console.error("Erreur lors du calcul du stock pour un article :", error);
+        throw error;
+    } 
+}
+
+const getStockAvecDetails = async (id_Article) => {
+    try {
+        const result = await Article.aggregate([
+            // {
+            //     $match: { _id: new mongoose.Types.ObjectId(id_Article) } // Sélectionner l'article
+            // },
+            {
+                $lookup: {
+                    from: "mouvementstocks", // Assurez-vous que le nom est correct
+                    localField: "_id",
+                    foreignField: "id_Article",
+                    as: "mouvements"
+                }
+            },
+            {
+                $unwind: { path: "$mouvements", preserveNullAndEmptyArrays: true } // Gérer les articles sans mouvements
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    nom: { $first: "$nom" }, // Garder le nom de l'article
+                    totalEntrer: { $sum: { $ifNull: ["$mouvements.entrer", 0] } },
+                    totalSortie: { $sum: { $ifNull: ["$mouvements.sortie", 0] } }
+                }
+            }
+        ]);
+
+        // return result.length ? result[0] : { _id: id_Article, totalEntrer: 0, totalSortie: 0 };
+        return result.length ? result : [];
+    } catch (error) {
+        console.error("Erreur:", error);
+        throw error;
+    }
+};
+
+const getStockAvecDetailsByArticle = async (id_Article) => {
+    try {
+        const result = await Article.aggregate([
+            {
+                $match: { _id: new mongoose.Types.ObjectId(id_Article) } // Sélectionner l'article
+            },
+            {
+                $lookup: {
+                    from: "mouvementstocks", // Assurez-vous que le nom est correct
+                    localField: "_id",
+                    foreignField: "id_Article",
+                    as: "mouvements"
+                }
+            },
+            {
+                $unwind: { path: "$mouvements", preserveNullAndEmptyArrays: true } // Gérer les articles sans mouvements
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    nom: { $first: "$nom" }, // Garder le nom de l'article
+                    totalEntrer: { $sum: { $ifNull: ["$mouvements.entrer", 0] } },
+                    totalSortie: { $sum: { $ifNull: ["$mouvements.sortie", 0] } }
+                }
+            }
+        ]);
+
+        return result.length ? result[0] : { _id: id_Article, totalEntrer: 0, totalSortie: 0 };
+    } catch (error) {
+        console.error("Erreur:", error);
+        throw error;
+    }
+};
+
+
+
+module.exports = {getAllMouvementStock, insertMouvementStock, getStockArticle, getStockAvecDetails, getStockAvecDetailsByArticle};                        

@@ -35,5 +35,7 @@ router.get('/mouvement-stock', authMiddleware, managerMiddleware, stockControlle
 
 router.put('/insert-mvmt', stockControllers.insertMouvementStock);
 
+router.get("/article", stockControllers.getMouvementArticle);
+
 module.exports = router;
 
