@@ -29,6 +29,6 @@ router.put('/update-role/:id', authMiddleware, managerMiddleware, async (req, re
 });
 
 router.put('/rendez-vous/valider/:rendezVousId', authMiddleware, managerMiddleware, rendezVousControllers.validerRendezVous);
-
+ 
 module.exports = router;
 
