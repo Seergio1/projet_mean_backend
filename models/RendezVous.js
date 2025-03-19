@@ -15,10 +15,10 @@ const RendezVousSchema = new mongoose.Schema({
 
 
 RendezVousSchema.pre("save", function (next) {
-    if (this.date) {
+    if (this.isNew || this.isModified("date")) {
         this.date = new Date(getDateSansDecalageHoraire(this.date)); // Stocker en UTC sans conversion
     }
-    if (this.date_demande) {
+    if (this.isNew || this.isModified("date_demande")) {
         this.date_demande = new Date(getDateSansDecalageHoraire(this.date_demande)); // Même logique pour date_demande
     }
     next();

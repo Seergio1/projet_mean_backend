@@ -1,8 +1,8 @@
 [{
   "_id": {
-    "$oid": "67d30ee48a5297b7577f5367"
+    "$oid": "67d2c9998e619d064dc93f95"
   },
-  "nom": "Vidange",
+  "nom": "vidange",
   "duree": 15,
-  "prix": 20000
+  "prix": 2000
 }]
