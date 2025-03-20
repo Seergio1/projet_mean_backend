@@ -17,16 +17,17 @@ function getDateFin(rendezVous){
     // console.log(dateFin);
     dateFin.setMilliseconds(dateFin.getMilliseconds() + total * 60 * 1000);
     
-    
     return dateFin;
 }
+
+
 
 async function updateEtatTache(id_tache,newEtat) {
     try {
         const tache = await Tache.findById(id_tache);
-        if (!tache) return res.status(404).json({ message: 'Tâche introuvable' });
+        if (!tache) throw new Error("Tâche introuvable");
         const rdv = await RendezVous.findById(tache.id_rendez_vous).populate("services");
-        if (!rdv) return res.status(404).json({ message: 'Rendez vous introuvable' });
+        if (!rdv) throw new Error("Rendez vous introuvable");
         
         const date_now = getDateSansDecalageHoraire(new Date(Date.now()));
         const date_fin = getDateFin_(rdv,date_now);
@@ -38,7 +39,7 @@ async function updateEtatTache(id_tache,newEtat) {
         
         
         
-        // await tache.save();
+        await tache.save();
 
     } catch (error) {
         throw new Error(error)

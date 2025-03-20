@@ -1,6 +1,6 @@
 const Notification = require('../models/Notification');
 const nodemailer = require("nodemailer");
-
+const RendezVous = require('../models/RendezVous')
 
 // Crée un transporteur SMTP avec ton mot de passe d'application
 const transporter = nodemailer.createTransport({
@@ -49,12 +49,13 @@ const mailOptions = {
   });
 };
 
-const io = socketIo(server, {
-    cors: {
-        origin: "http://localhost:4200", // URL de ton application Angular
-        methods: ["GET", "POST"]
-    }
-});
+// const io = socketIo(server, {
+//     cors: {
+//         origin: "http://localhost:4200", // URL de ton application Angular
+//         methods: ["GET", "POST"]
+//     }
+// });
+
 // Fonction pour envoyer une notification en temps réel via WebSocket
 const sendSocketNotification = (clientId, message) => {
     io.emit(`notification-${clientId}`, { message });
@@ -77,4 +78,6 @@ const createNotification = async (client, appointment, message) => {
         console.error("❌ Erreur d'enregistrement de la notification:", error);
     }
 };
+
+module.exports = {getRendezVousProche};
 

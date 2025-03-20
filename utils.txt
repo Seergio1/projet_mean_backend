@@ -1,6 +1,6 @@
 npm init ("npm install" raha ohatra ka efa initialiser ilay projet node)
 npm install eslint --save-dev
-npm install express mongoose cors dotenv body-parser jsonwebtoken bcryptjs moment-timezone googleapis socket.io node-cron
+npm install express mongoose cors dotenv body-parser jsonwebtoken bcryptjs moment-timezone googleapis socket.io node-cron nodemailer
 npm install --save-dev nodemon
 
 // génération de clé sécurisée (secret key hi cryptena ilay token)

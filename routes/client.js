@@ -5,6 +5,7 @@ const rendezVousControllers = require('../controllers/rendezVousControllers')
 const devisControllers = require('../controllers/DevisControllers')
 const serviceControllers = require('../controllers/serviceControllers')
 const factureControllers = require('../controllers/factureControllers')
+const notificationControllers = require('../controllers/notificationControllers')
 
 
 const router = express.Router();
@@ -26,6 +27,10 @@ router.post('/service/historique_tous_vehicule',authMiddleware,serviceController
 router.post('/service/historique_vehicule',authMiddleware,serviceControllers.getHistoriqueServiceClientVehicule)
 
 router.post('/facture/demande',authMiddleware,factureControllers.ajoutFacture)
+
+router.get('/notifications/get',authMiddleware,notificationControllers.getNotificationRendezVous)
+
+router.post('/rendezvous/refus',authMiddleware,rendezVousControllers.refuserRendezVousAuto)
 
 
 module.exports = router;

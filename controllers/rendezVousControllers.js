@@ -1,4 +1,4 @@
-const {prendreRendezVous,validerRendezVous} = require('../services/RendezVousService');
+const {prendreRendezVous,validerRendezVous,refuserRendezVousAuto} = require('../services/RendezVousService');
 
 exports.prendreRendezVous = async (req, res) => {
     try {
@@ -28,7 +28,7 @@ exports.prendreRendezVous = async (req, res) => {
 exports.validerRendezVous = async (req, res) => {
     try {
         // Récupérer les données envoyées dans le corps de la requête
-        const { managerId, mecanicienId } = req.body;
+        const { managerId, mecanicienId, etat } = req.body;
         const rendezVousId = req.params.rendezVousId
 
         // Vérification des données nécessaires
@@ -37,7 +37,7 @@ exports.validerRendezVous = async (req, res) => {
         }
 
         // Appeler le service pour prendre un rendez-vous
-        const result = await validerRendezVous(managerId, rendezVousId, mecanicienId);
+        const result = await validerRendezVous(managerId, rendezVousId, mecanicienId,etat);
 
         // Si tout se passe bien, renvoyer une réponse avec succès
         res.status(201).json({ message: "Rendez-vous valider avec succès", data: result });
@@ -50,3 +50,15 @@ exports.validerRendezVous = async (req, res) => {
         res.status(500).json({ message: "Erreur lors de la validation de rendez-vous." });
     }
 };
+
+exports.refuserRendezVousAuto = async (req,res) => {
+    try {
+        const result = await refuserRendezVousAuto();
+        res.status(201).json({ message: "Rendez vous auto succès", data: result });
+    } catch (error) {
+        console.error("Erreur lors du rendez vous auto succès:", error);
+
+        // Renvoyer une réponse d'erreur générique
+        res.status(500).json({ message: "Erreur lors du rendez vous auto succès." });
+    }
+}
