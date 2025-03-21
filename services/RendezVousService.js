@@ -23,6 +23,14 @@ async function prendreRendezVous(clientId, date, vehiculeId, servicesIds) {
       throw new Error("Certains services spécifiés sont invalides");
     }
 
+    // check disponibilité date
+    const rendezVousValide = await Tache.find({
+      date: {$gte:date},
+      etat:""
+    })
+
+    
+
     // Création du rendez-vous
     const rendezVous = new RendezVous({
       id_client: clientId,

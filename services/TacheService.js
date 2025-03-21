@@ -8,6 +8,7 @@ function getDateFin(rendezVous){
     let total = 0.0;
     allServices.forEach(service => {
             total += service.duree;  
+            
     });
 
     // Créer une nouvelle date pour éviter de modifier l'original
