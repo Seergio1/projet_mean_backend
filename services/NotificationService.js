@@ -13,8 +13,9 @@ const transporter = nodemailer.createTransport({
 });
 
 // Fonction pour envoyer un e-mail
-const sendEmailNotification = (to) => {
+const sendEmailNotification = (to,dateRendezVous) => {
 // Envoi d'un e-mail
+const lienAnnulation = "https://youtu.be/mgFuDUrHs0A?si=tm2AcGKbJDBtaSFl"
 const mailOptions = {
     from: 'sergiorajaohariniaina@gmail.com',
     to: to,

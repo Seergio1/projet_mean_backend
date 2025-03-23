@@ -8,7 +8,10 @@ const cron = require("node-cron");
 const authRoutes = require('./routes/auth')
 const clientRoutes = require('./routes/client')
 const mecanicienRoutes = require('./routes/mecanicien')
-const managerRoutes = require('./routes/manager')
+const managerRoutes = require('./routes/manager');
+const RendezVous = require('./models/RendezVous')
+const { sendEmailNotification } = require('./services/NotificationService');
+const { getDateSansDecalageHoraire } = require('./services/Utils');
 // const Vehicule = require('./models/Vehicule')
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -33,25 +36,27 @@ app.use('/api/manager', managerRoutes);
 
 
 // Planification de l'envoi de la notification 24 heures avant le rendez-vous
-// cron.schedule('0 0 * * *', async () => {
-//     try {
-//         const now = new Date();
 
-//         // Récupérer tous les rendez-vous dont la date est dans 24 heures
-//         const rendezVous = await RendezVous.find({
-//             date: { $gte: now, $lte: new Date(now.getTime() + 24 * 60 * 60 * 1000) },  // 24 heures à partir de maintenant
-//             etat: 'accepté'
-//         }).populate('id_client');  // Récupérer les informations du client
+cron.schedule('0 0 * * *', async () => { // chaque minuit
+    try {
+        const now = getDateSansDecalageHoraire(new Date());
 
-//         for (const rdv of rendezVous) {
-//             const client = rdv.id_client;
+        // Récupérer tous les rendez-vous dont la date est dans 24 heures
+        const rendezVous = await RendezVous.find({
+            date: { $gte: now, $lte: new Date(now.getTime() + 24 * 60 * 60 * 1000) },  // 24 heures à partir de maintenant
+            etat: 'accepté'
+        }).populate('id_client');  // Récupérer les informations du client
+        console.log(rendezVous);
+        
+        for (const rdv of rendezVous) {
+            const client = rdv.id_client;
 
-//             // Envoyer l'email de notification
-//             await envoyerNotificationEmail(client.email, rdv.date);
-//         }
-//     } catch (error) {
-//         console.error("❌ Erreur lors de la planification des notifications :", error);
-//     }
-// });
+            // Envoyer l'email de notification
+            sendEmailNotification("giorakotomalala@gmail.com", rdv.date);
+        }
+    } catch (error) {
+        console.error("❌ Erreur lors de la planification des notifications :", error);
+    }
+});
 
 app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));

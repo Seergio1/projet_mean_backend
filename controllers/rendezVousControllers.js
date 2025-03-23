@@ -1,22 +1,26 @@
 const {proposerRendezVous,validerRendezVous, annulerRendezVous} = require('../services/RendezVousService');
+const { getDateSansDecalageHoraire } = require('../services/Utils');
 
 exports.proposerRendezVous = async (req, res) => {
     try {
-        const { clientId ,servicesIds } = req.body;
+        const { clientId ,servicesIds, dateSelectionnee } = req.body;
 
-        if (!clientId || !servicesIds) {
+        if (!clientId || !servicesIds || !dateSelectionnee) {
             return res.status(400).json({ message: "Tous les champs sont requis" });
         }
+        if (dateSelectionnee < getDateSansDecalageHoraire(new Date(new Date().getTime()))) {
+            return res.status(400).json({ message: "La date choisie est déjà passé." });
+        }
 
-        const result = await proposerRendezVous(clientId, servicesIds);
+        const result = await proposerRendezVous(clientId, servicesIds, dateSelectionnee);
 
         res.status(201).json({ message: "Rendez-vous pris avec succès", data: result });
 
     } catch (error) {
        
-        console.error("Erreur lors de la prise de rendez-vous:", error);
+        console.error("Erreur lors de la prise de rendez-vous:", error.message);
 
-        res.status(500).json({ message: "Erreur lors de la prise de rendez-vous." });
+        res.status(500).json({ message: "Erreur lors de la prise de rendez-vous: "+error.message });
     }
 };
 
@@ -44,9 +48,9 @@ exports.validerRendezVous = async (req, res) => {
 
     } catch (error) {
        
-        console.error("Erreur lors de la validation de rendez-vous:", error);
+        console.error("Erreur lors de la validation de rendez-vous:", error.message);
 
-        res.status(500).json({ message: "Erreur lors de la validation de rendez-vous." });
+        res.status(500).json({ message: "Erreur lors de la validation de rendez-vous: "+error.message });
     }
 };
 

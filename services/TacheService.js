@@ -32,7 +32,7 @@ async function getAllTacheMecanicien(mecanicienId){
     }
 }
 
-async function updateEtatTache(id_tache,newEtat) {
+async function updateEtatTache(id_tache,newEtat,libelle = "Déscription tâche") {
     try {
         const tache = await Tache.findById(id_tache);
         if (!tache) throw new Error("Tâche introuvable");
@@ -45,6 +45,7 @@ async function updateEtatTache(id_tache,newEtat) {
         tache.etat = newEtat;
         tache.date_debut = date_now;
         tache.date_fin = date_fin;
+        tache.libelle = libelle;
     
         await tache.save();
 

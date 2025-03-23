@@ -1,24 +1,18 @@
 [{
   "_id": {
-    "$oid": "67d820cf66182f01d22065ed"
+    "$oid": "67d31c5b6b525a0e752b0920"
   },
   "id_mecanicien": {
-    "$oid": "67d1bdb3bd69d67516934f7e"
+    "$oid": "67d1ba0cbd69d67516934f7a"
   },
   "id_vehicule": {
-    "$oid": "67d2d4668e619d064dc93f9c"
-  },
-  "id_rendez_vous": {
-    "$oid": "67d815e147eac7ef8761e2ff"
+    "$oid": "67d30e0b8a5297b7577f535f"
   },
   "libelle": "Travail à réaliser sur le véhicule",
-  "prix": 2000,
-  "etat": "en cours",
-  "date_debut": {
-    "$date": "2025-03-19T00:59:27.099Z"
-  },
-  "date_fin": {
-    "$date": "2025-03-19T06:15:00.000Z"
+  "prix": 20000,
+  "etat": "terminée",
+  "date": {
+    "$date": "2025-03-15T07:00:00.000Z"
   },
   "__v": 0
 }]

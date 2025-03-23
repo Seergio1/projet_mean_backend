@@ -1,12 +1,12 @@
 const {updateEtatTache} = require('../services/TacheService')
 exports.updateEtatTache = async (req,res) =>{
     try {
-        const {mecanicienId,newEtat} = req.body;
+        const {mecanicienId,newEtat,libelle} = req.body;
         const tacheId = req.params.tacheId;
         if (!mecanicienId || !tacheId) {
             return res.status(400).json({ message: "Tous les champs sont requis" });
         }
-        const result = await updateEtatTache(tacheId,newEtat);
+        const result = await updateEtatTache(tacheId,newEtat,libelle);
 
         res.status(201).json({ message: "Etat de la tâche a été modifié avec succès", data: result });
     } catch (error) {

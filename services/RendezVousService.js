@@ -2,10 +2,12 @@ const RendezVous = require("../models/RendezVous");
 const Utilisateur = require("../models/Utilisateur");
 const Service = require("../models/Service");
 const Tache = require("../models/Tache");
+const Utils = require("../services/Utils");
 const { getDateFin } = require("../services/TacheService");
+const { getDateSansDecalageHoraire } = require("./Utils");
 
 // Fonction principale pour proposer des créneaux disponibles après le choix des services
-async function proposerRendezVous(clientId, servicesIds) {
+async function proposerRendezVous(clientId, servicesIds,dateSelectionnee) {
   try {
     // Vérifier que le client existe et a le bon rôle
     const client = await Utilisateur.findOne({ _id: clientId, role: "client" });
@@ -24,7 +26,7 @@ async function proposerRendezVous(clientId, servicesIds) {
     console.log("Durée totale des services :", dureeTotaleMinutes, "minutes");
 
     // Générer une liste de créneaux horaires disponibles
-    const datesDisponibles = await trouverDatesDisponibles(dureeTotaleMinutes);
+    const datesDisponibles = await trouverDatesDisponibles(dureeTotaleMinutes,dateSelectionnee);
     if (datesDisponibles.length === 0) {
       throw new Error("Aucun créneau disponible pour ces services.");
     }
@@ -38,13 +40,14 @@ async function proposerRendezVous(clientId, servicesIds) {
 }
 
 // Fonction pour générer les créneaux horaires disponibles
-async function trouverDatesDisponibles(dureeTotaleMinutes) {
-  const now = new Date();
-  const dateActuelle = new Date(now.getTime());
+async function trouverDatesDisponibles(dureeTotaleMinutes,dateSelectionnee) {
+  const dateActuelle = getDateSansDecalageHoraire(new Date(dateSelectionnee));
+  if(!Utils.checkHeureDeTravail(dateActuelle)) throw new Error("La date demandée n'est pas dans les horaires de travail")
 
   // Chercher des créneaux disponibles dans les prochaines heures (exemple de 3 créneaux espacés de 1 heure)
   let datesDisponibles = [];
-  for (let i = 1; i <= 3; i++) {
+  datesDisponibles.push({})
+  for (let i = 0; i <= 3; i++) {
     let dateDebut = new Date(dateActuelle.getTime() + i * 60 * 60000); // ième créneau horaire
     let dateFin = new Date(dateDebut.getTime() + dureeTotaleMinutes * 60000);
 
@@ -78,6 +81,7 @@ async function trouverMecanicienDisponible(dateDebut, dateFin) {
     role: "mecanicien",
     _id: {
       $nin: await Tache.distinct("id_mecanicien", {
+        etat: { $ne: "terminée" },
         $or: [
           { date_debut: { $lte: dateDebut }, date_fin: { $gte: dateDebut } },
           { date_debut: { $lte: dateFin }, date_fin: { $gte: dateFin } },
@@ -104,9 +108,13 @@ async function validerRendezVous(clientId, vehiculeId, servicesIds, dateSelectio
       throw new Error("Certains services spécifiés sont invalides");
     }
 
+
+
     // Calcul de la durée totale des services
     const dureeTotaleMinutes = services.reduce((total, service) => total + service.duree, 0);
-    const dateDebut = new Date(dateSelectionnee);
+    const prixTotale = services.reduce((total, service) => total + service.prix, 0);
+    const dateDebut = getDateSansDecalageHoraire(new Date(dateSelectionnee));
+    if(!Utils.checkHeureDeTravail(dateDebut)) throw new Error("La date demandée n'est pas dans les horaires de travail")
     const dateFin = new Date(dateDebut.getTime() + dureeTotaleMinutes * 60000); // Ajout en minutes
 
     // Vérifier la disponibilité du créneau sélectionné
@@ -128,8 +136,8 @@ async function validerRendezVous(clientId, vehiculeId, servicesIds, dateSelectio
       date: dateDebut,
       date_fin: dateFin,
       services: servicesIds,
-      etat: "validé", // Validation automatique du rendez-vous
-      mecanicien_assigne: mecanicienDisponible._id, // Assignation d'un mécanicien
+      etat: "accepté", // Validation automatique du rendez-vous
+      id_mecanicien: mecanicienDisponible._id, // Assignation d'un mécanicien
     });
 
     await rendezVous.save();
@@ -137,7 +145,10 @@ async function validerRendezVous(clientId, vehiculeId, servicesIds, dateSelectio
     // Création de la tâche pour le mécanicien
     const tache = new Tache({
       id_mecanicien: mecanicienDisponible._id,
-      id_rendezVous: rendezVous._id,
+      id_vehicule:vehiculeId,
+      libelle:"Déscription tâche",
+      prix: prixTotale,
+      id_rendez_vous: rendezVous._id,
       date_debut: dateDebut,
       date_fin: dateFin,
       etat: "en attente",
@@ -154,11 +165,16 @@ async function validerRendezVous(clientId, vehiculeId, servicesIds, dateSelectio
   }
 }
 
-const annulerRendezVous = async (rendezVousId) => {
+async function annulerRendezVous (rendezVousId) {
   try {
       // Trouver le rendez-vous par son ID
       const rendezVous = await RendezVous.findById(rendezVousId);
-
+      const checkTacheTerminer = await Tache.findOne({
+        id_rendez_vous: rendezVousId, 
+        etat: "terminée"              
+    });
+      if(checkTacheTerminer) throw new Error("Les tâches associées à ce rendez vous sont déjà terminées");
+      
       if (!rendezVous) {
           throw new Error("Rendez-vous non trouvé.");
       }
@@ -166,9 +182,10 @@ const annulerRendezVous = async (rendezVousId) => {
       // Changer l'état du rendez-vous à "annulé"
       rendezVous.etat = "annulé";
       await rendezVous.save();
+      
 
       // Supprimer la tâche associée à ce rendez-vous
-      const tache = await Tache.findOneAndDelete({ id_rendezVous: rendezVousId });
+      const tache = await Tache.findOneAndDelete({ id_rendez_vous: rendezVousId });
 
       if (!tache) {
           console.log("Aucune tâche associée à ce rendez-vous.");
