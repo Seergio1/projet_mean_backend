@@ -7,7 +7,7 @@ const RendezVousSchema = new mongoose.Schema({
     id_vehicule: { type: mongoose.Schema.Types.ObjectId, ref: "Vehicule", required: true },
     date: { type: Date, required: true }, // Date du rendez-vous validé
     date_demande: { type: Date, default: Date.now }, // Date de la demande de rendez-vous
-    etat: { type: String, enum: ["en attente", "accepté", "refusé"], default: "en attente" },
+    etat: { type: String, enum: ["en attente", "accepté", "annulé"], default: "en attente" },
     id_mecanicien: { type: mongoose.Schema.Types.ObjectId, ref: "Utilisateur", required: false }, 
     services: [{ type: mongoose.Schema.Types.ObjectId, ref: "Service" }] // Liste des services demandés
 });
@@ -16,10 +16,10 @@ const RendezVousSchema = new mongoose.Schema({
 
 RendezVousSchema.pre("save", function (next) {
     if (this.isNew || this.isModified("date")) {
-        this.date = new Date(getDateSansDecalageHoraire(this.date)); // Stocker en UTC sans conversion
+        this.date = new Date(getDateSansDecalageHoraire(this.date)); 
     }
     if (this.isNew || this.isModified("date_demande")) {
-        this.date_demande = new Date(getDateSansDecalageHoraire(this.date_demande)); // Même logique pour date_demande
+        this.date_demande = new Date(getDateSansDecalageHoraire(this.date_demande)); 
     }
     next();
 });

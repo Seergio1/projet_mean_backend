@@ -4,7 +4,6 @@ const { getDateSansDecalageHoraire, getDateFin_ } = require("./Utils");
 
 function getDateFin(rendezVous){
     const allServices = rendezVous.services;
-    
     let total = 0.0;
     allServices.forEach(service => {
             total += service.duree;  
@@ -21,7 +20,17 @@ function getDateFin(rendezVous){
     return dateFin;
 }
 
-
+async function getAllTacheMecanicien(mecanicienId){
+    try {
+        const taches = await Tache.find({
+            id_mecanicien : mecanicienId
+        }).populate("id_rendez_vous");
+        if(taches.length == 0) throw new Error("Aucune tâche trouvée");
+        return taches;
+    } catch (error) {
+        throw new Error(error)
+    }
+}
 
 async function updateEtatTache(id_tache,newEtat) {
     try {
@@ -36,10 +45,7 @@ async function updateEtatTache(id_tache,newEtat) {
         tache.etat = newEtat;
         tache.date_debut = date_now;
         tache.date_fin = date_fin;
-        
-        
-        
-        
+    
         await tache.save();
 
     } catch (error) {
@@ -50,4 +56,4 @@ async function updateEtatTache(id_tache,newEtat) {
 
 
 
-module.exports = {getDateFin,updateEtatTache};
+module.exports = {getDateFin,updateEtatTache,getAllTacheMecanicien};

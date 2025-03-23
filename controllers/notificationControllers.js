@@ -1,4 +1,4 @@
-const { getRendezVousProche } = require("../services/NotificationService");
+const { getRendezVousProche } = require("../services/RendezVousService");
 
 exports.getNotificationRendezVous = async (req,res) =>{
     try {

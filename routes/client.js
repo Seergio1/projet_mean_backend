@@ -14,9 +14,14 @@ router.get('/test_client', authMiddleware, (req, res) => {
     res.json({ message: 'Bienvenue sur la route client !' });
 });
 
-router.post('/rendez-vous/prise',authMiddleware,rendezVousControllers.prendreRendezVous)
 
-router.post('/devis/demande',authMiddleware,devisControllers.demandeDevis) //
+router.post('/rendez-vous/proposition',authMiddleware,rendezVousControllers.proposerRendezVous)
+
+router.post('/rendez-vous/validation',authMiddleware,rendezVousControllers.validerRendezVous)
+
+router.delete('/rendez-vous/annulation/:rendezVousId', rendezVousControllers.annulerRendezVous)
+
+router.post('/devis/demande',authMiddleware,devisControllers.demandeDevis) 
 
 router.post('/devis/historique_tous_vehicule',authMiddleware,devisControllers.getAllHistoriqueDevisClient)
 
@@ -30,7 +35,6 @@ router.post('/facture/demande',authMiddleware,factureControllers.ajoutFacture)
 
 router.get('/notifications/get',authMiddleware,notificationControllers.getNotificationRendezVous)
 
-router.post('/rendezvous/refus',authMiddleware,rendezVousControllers.refuserRendezVousAuto)
 
 
 module.exports = router;

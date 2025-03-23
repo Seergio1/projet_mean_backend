@@ -1,64 +1,77 @@
-const {prendreRendezVous,validerRendezVous,refuserRendezVousAuto} = require('../services/RendezVousService');
+const {proposerRendezVous,validerRendezVous, annulerRendezVous} = require('../services/RendezVousService');
 
-exports.prendreRendezVous = async (req, res) => {
+exports.proposerRendezVous = async (req, res) => {
     try {
-        // Récupérer les données envoyées dans le corps de la requête
-        const { clientId, date, servicesIds, vehiculeId } = req.body;
+        const { clientId ,servicesIds } = req.body;
 
-        // Vérification des données nécessaires
-        if (!clientId || !date || !servicesIds || !vehiculeId || servicesIds.length === 0) {
+        if (!clientId || !servicesIds) {
             return res.status(400).json({ message: "Tous les champs sont requis" });
         }
 
-        // Appeler le service pour prendre un rendez-vous
-        const result = await prendreRendezVous(clientId, date,vehiculeId, servicesIds);
+        const result = await proposerRendezVous(clientId, servicesIds);
 
-        // Si tout se passe bien, renvoyer une réponse avec succès
         res.status(201).json({ message: "Rendez-vous pris avec succès", data: result });
 
     } catch (error) {
        
         console.error("Erreur lors de la prise de rendez-vous:", error);
 
-        // Renvoyer une réponse d'erreur générique
         res.status(500).json({ message: "Erreur lors de la prise de rendez-vous." });
     }
 };
 
 exports.validerRendezVous = async (req, res) => {
     try {
-        // Récupérer les données envoyées dans le corps de la requête
-        const { managerId, mecanicienId, etat } = req.body;
-        const rendezVousId = req.params.rendezVousId
-
-        // Vérification des données nécessaires
-        if (!mecanicienId || !managerId || !rendezVousId) {
+        const { clientId, vehiculeId, servicesIds,dateSelectionnee } = req.body;
+        
+        if (!clientId || !vehiculeId || !servicesIds || !dateSelectionnee) {
             return res.status(400).json({ message: "Tous les champs sont requis" });
         }
+        if (servicesIds.length == 0) {
+            return res.status(400).json({ message: "Veuillez choisir au moins un service" });
+        }
 
-        // Appeler le service pour prendre un rendez-vous
-        const result = await validerRendezVous(managerId, rendezVousId, mecanicienId,etat);
+        const selectedDate = new Date(dateSelectionnee);
+        const currentDate = new Date();
 
-        // Si tout se passe bien, renvoyer une réponse avec succès
+        if (selectedDate < currentDate) {
+            return res.status(400).json({ message: "La date sélectionnée est dans le passé. Veuillez choisir une date future." });
+        }
+
+        const result = await validerRendezVous(clientId, vehiculeId, servicesIds,dateSelectionnee);
+
         res.status(201).json({ message: "Rendez-vous valider avec succès", data: result });
 
     } catch (error) {
        
         console.error("Erreur lors de la validation de rendez-vous:", error);
 
-        // Renvoyer une réponse d'erreur générique
         res.status(500).json({ message: "Erreur lors de la validation de rendez-vous." });
     }
 };
 
-exports.refuserRendezVousAuto = async (req,res) => {
+exports.annulerRendezVous = async (req, res) => {
     try {
-        const result = await refuserRendezVousAuto();
-        res.status(201).json({ message: "Rendez vous auto succès", data: result });
-    } catch (error) {
-        console.error("Erreur lors du rendez vous auto succès:", error);
+        const { rendezVousId } = req.params; 
 
-        // Renvoyer une réponse d'erreur générique
-        res.status(500).json({ message: "Erreur lors du rendez vous auto succès." });
+        const result = await annulerRendezVous(rendezVousId);
+
+        res.status(200).json(result); 
+    } catch (error) {
+        console.error("Erreur lors de l'annulation du rendez-vous:", error);
+        res.status(500).json({ message: "Erreur lors de l'annulation du rendez-vous." });
     }
-}
+};
+
+
+// exports.refuserRendezVousAuto = async (req,res) => {
+//     try {
+//         const result = await refuserRendezVousAuto();
+//         res.status(201).json({ message: "Rendez vous auto succès", data: result });
+//     } catch (error) {
+//         console.error("Erreur lors du rendez vous auto succès:", error);
+
+//         // Renvoyer une réponse d'erreur générique
+//         res.status(500).json({ message: "Erreur lors du rendez vous auto succès." });
+//     }
+// }

@@ -9,7 +9,7 @@ const authRoutes = require('./routes/auth')
 const clientRoutes = require('./routes/client')
 const mecanicienRoutes = require('./routes/mecanicien')
 const managerRoutes = require('./routes/manager')
-const Vehicule = require('./models/Vehicule')
+// const Vehicule = require('./models/Vehicule')
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -31,21 +31,27 @@ app.use('/api/client', clientRoutes);
 app.use('/api/mecanicien', mecanicienRoutes);
 app.use('/api/manager', managerRoutes);
 
-// // Mise à jour du cron pour enregistrer la notif en BD
-// cron.schedule("0 9 * * *", async () => {
-//     console.log("📢 Vérification des rendez-vous à notifier...");
 
-//     const appointments = await getUpcomingAppointments();
+// Planification de l'envoi de la notification 24 heures avant le rendez-vous
+// cron.schedule('0 0 * * *', async () => {
+//     try {
+//         const now = new Date();
 
-//     for (const appointment of appointments) {
-//         const client = appointment.id_client;
-//         const message = "Votre rendez-vous est prévu dans 24h !";
+//         // Récupérer tous les rendez-vous dont la date est dans 24 heures
+//         const rendezVous = await RendezVous.find({
+//             date: { $gte: now, $lte: new Date(now.getTime() + 24 * 60 * 60 * 1000) },  // 24 heures à partir de maintenant
+//             etat: 'accepté'
+//         }).populate('id_client');  // Récupérer les informations du client
 
-//         await sendEmailNotification("giorakotomalala@gmail.com","Test mail","Le contenu de l'email")
-//         await createNotification(client, appointment, message);
+//         for (const rdv of rendezVous) {
+//             const client = rdv.id_client;
+
+//             // Envoyer l'email de notification
+//             await envoyerNotificationEmail(client.email, rdv.date);
+//         }
+//     } catch (error) {
+//         console.error("❌ Erreur lors de la planification des notifications :", error);
 //     }
-
-//     console.log(`✅ ${appointments.length} notifications envoyées.`);
 // });
 
 app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));
