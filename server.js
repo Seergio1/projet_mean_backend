@@ -12,7 +12,7 @@ const managerRoutes = require('./routes/manager');
 const RendezVous = require('./models/RendezVous')
 const { sendEmailNotification } = require('./services/NotificationService');
 const { getDateSansDecalageHoraire } = require('./services/Utils');
-// const Vehicule = require('./models/Vehicule')
+const Vehicule = require('./models/Vehicule')
 const app = express();
 const PORT = process.env.PORT || 5000;
 

@@ -33,6 +33,10 @@ router.post('/service/historique_vehicule',authMiddleware,serviceControllers.get
 
 router.post('/facture/demande',authMiddleware,factureControllers.ajoutFacture)
 
+router.get('/facture/generer/:id',authMiddleware,factureControllers.genererFacture)
+
+router.get('/factures/:idClient',authMiddleware,factureControllers.getAllFactureByIdClient)
+
 router.get('/notifications/get',authMiddleware,notificationControllers.getNotificationRendezVous)
 
 

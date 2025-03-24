@@ -9,6 +9,6 @@
 }
 
 {
-  "email": "client1@example.com",
+  "email": "giorakotomalala@gmail.com",
   "password": "Client1"
 }
