@@ -6,7 +6,7 @@
   "email": "sergio@example.com",
   "contact": "0344173919",
   "password": "$2b$10$2fTdgKKhJPVcq6KMEZFAce6knN6XM5EJojEu5uK0r2VpHgvRHYOGa",
-  "role": "manager",
+  "role": "mecanicien",
   "__v": 0
 },
 {
@@ -17,7 +17,7 @@
   "email": "johndoe@example.com",
   "contact": "1234567890",
   "password": "$2b$10$MsDfI5Un3KMwyZZjKoh.y.JGXMw3MoH9ZZPnOlpSAQQ9.hiKkPpu2",
-  "role": "mecanicien",
+  "role": "manager",
   "__v": 0
 },
 {
@@ -25,14 +25,14 @@
     "$oid": "67d1c492360396ed94c59534"
   },
   "nom": "Client 1",
-  "email": "client1@example.com",
+  "email": "giorakotomalala@gmail.com",
   "contact": "789456123",
   "password": "$2b$10$t1lpYPEzov3OOldQgmF/aul51QrdnpKbWV2pLIqZ7yXRYQN7STQRu",
   "role": "client",
   "__v": 0,
   "vehicules": [
     {
-      "$oid": "67d2d4668e619d064dc93f9c"
+      "$oid": "67d30e0b8a5297b7577f535f"
     }
   ]
 }]

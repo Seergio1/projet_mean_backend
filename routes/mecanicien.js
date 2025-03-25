@@ -12,6 +12,8 @@ router.get('/test_mecanicien', authMiddleware, mecanicienMiddleware, (req, res) 
 
 router.put('/tache/modification_etat/:tacheId', authMiddleware, mecanicienMiddleware, tacheControllers.updateEtatTache);
 
+router.get('/taches/:mecanicienId', authMiddleware, mecanicienMiddleware, tacheControllers.getAllTacheMecanicien);
+
 
 
 

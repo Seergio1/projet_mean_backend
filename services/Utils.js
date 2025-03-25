@@ -39,4 +39,16 @@ function getDateSansDecalageHoraire(date_initial){
     return new Date(date_initial.getTime() - timezoneOffset * 60 * 1000);
 }
 
-module.exports = {getDateSansDecalageHoraire,getDateFin_,getTotalArticle};
+function checkHeureDeTravail(date) {
+    if (!(date instanceof Date)) {
+        throw new Error("La date séléctionnée n'est pas une date valide.");
+    }
+
+    const hour = date.getHours();
+    const minutes = date.getMinutes();
+
+    // Vérifier si l'heure est entre 8h-12h ou 13h-17h
+    return (hour >= 8 && hour < 12) || (hour >= 13 && hour < 17);
+};
+
+module.exports = {getDateSansDecalageHoraire,getDateFin_,getTotalArticle,checkHeureDeTravail};
