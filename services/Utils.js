@@ -51,4 +51,17 @@ function checkHeureDeTravail(date) {
     return (hour >= 8 && hour < 12) || (hour >= 13 && hour < 17);
 };
 
-module.exports = {getDateSansDecalageHoraire,getDateFin_,getTotalArticle,checkHeureDeTravail};
+function formatDate(dateString) {
+    const date = new Date(dateString); // Convertit la date en objet Date
+  
+    return new Intl.DateTimeFormat('fr-FR', {
+      weekday: 'long',  // Jour en lettres (ex: samedi)
+      day: '2-digit',   // Jour en chiffres (ex: 29)
+      month: 'long',    // Mois en lettres (ex: mars)
+      hour: '2-digit',  // Heure (ex: 13)
+      minute: '2-digit', // Minutes (ex: 00)
+      timeZone: 'UTC',  // Force l'affichage en UTC
+    }).format(date);
+  }
+
+module.exports = {getDateSansDecalageHoraire,getDateFin_,getTotalArticle,checkHeureDeTravail,formatDate};

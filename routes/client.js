@@ -39,6 +39,8 @@ router.get('/factures/:idClient',authMiddleware,factureControllers.getAllFacture
 
 router.get('/notifications/get',authMiddleware,notificationControllers.getNotificationRendezVous)
 
+router.put('/notifications/etat/:id_notification',authMiddleware,notificationControllers.updatEtatNotification)
+
 
 
 module.exports = router;

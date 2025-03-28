@@ -9,6 +9,9 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: 'sergiorajaohariniaina@gmail.com', 
     pass: mdp     
+  },
+  tls: {
+    rejectUnauthorized: false,
   }
 });
 
@@ -36,6 +39,30 @@ const mailOptions = {
     }
   });
 };
+
+async function updatEtatNotification(newEtat,notificationId) {
+  try {
+    const notification = await Notification.findById(notificationId);
+    if (!notification) throw new Error("Notification introuvable");
+    notification.etat = newEtat;
+    await notification.save();
+    return notification
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+async function getNotificationsByIdClient(clientId) {
+  try {
+    const notifications = await Notification.find({
+      id_client: clientId
+    });
+    if (!notifications) throw new Error("Notification(s) introuvable(s)");
+    return notifications
+  } catch (error) {
+    throw new Error(error);
+  }
+}
 
 // const io = socketIo(server, {
 //     cors: {
@@ -67,5 +94,5 @@ const mailOptions = {
 //     }
 // };
 
-module.exports = {sendEmailNotification};
+module.exports = {sendEmailNotification,updatEtatNotification,getNotificationsByIdClient};
 

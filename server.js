@@ -10,9 +10,11 @@ const clientRoutes = require('./routes/client')
 const mecanicienRoutes = require('./routes/mecanicien')
 const managerRoutes = require('./routes/manager');
 const RendezVous = require('./models/RendezVous')
+const Notification = require('./models/Notification')
 const { sendEmailNotification } = require('./services/NotificationService');
 const { getDateSansDecalageHoraire } = require('./services/Utils');
 const Vehicule = require('./models/Vehicule')
+const Utils = require('./services/Utils')
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -37,7 +39,8 @@ app.use('/api/manager', managerRoutes);
 
 // Planification de l'envoi de la notification 24 heures avant le rendez-vous
 
-cron.schedule('0 0 * * *', async () => { // chaque minuit
+cron.schedule('24 15 * * *', async () => { // chaque minuit
+    
     try {
         const now = getDateSansDecalageHoraire(new Date());
 
@@ -52,7 +55,15 @@ cron.schedule('0 0 * * *', async () => { // chaque minuit
             const client = rdv.id_client;
 
             // Envoyer l'email de notification
-            sendEmailNotification("giorakotomalala@gmail.com", rdv.date);
+            // sendEmailNotification("giorakotomalala@gmail.com", rdv.date);
+            sendEmailNotification(rdv.id_client.email,Utils.formatDate(rdv.date));
+
+            const notification = new Notification({
+                message: "Rendez-vous dans 24 heures",
+                id_client: client._id,
+                id_rendez_vous: rdv._id
+            });
+            // await notification.save();
         }
     } catch (error) {
         console.error("❌ Erreur lors de la planification des notifications :", error);
