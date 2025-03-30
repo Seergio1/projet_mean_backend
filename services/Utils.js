@@ -33,10 +33,22 @@ function getDateFin_(rendezVous,date_){
 }
 
 
-function getDateSansDecalageHoraire(date_initial){
-    const timezoneOffset = new Date().getTimezoneOffset(); // Décalage en minutes
+// function getDateSansDecalageHoraire(date_initial){
+//     const timezoneOffset = new Date().getTimezoneOffset(); // Décalage en minutes
     
-    return new Date(date_initial.getTime() - timezoneOffset * 60 * 1000);
+//     return new Date(date_initial.getTime() - timezoneOffset * 60 * 1000);
+// }
+
+function getDateSansDecalageHoraire(date_initial) {
+    return new Date(Date.UTC(
+        date_initial.getFullYear(),
+        date_initial.getMonth(),
+        date_initial.getDate(),
+        date_initial.getHours(),
+        date_initial.getMinutes(),
+        date_initial.getSeconds(),
+        date_initial.getMilliseconds()
+    ));
 }
 
 function checkHeureDeTravail(date) {

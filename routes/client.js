@@ -37,9 +37,11 @@ router.get('/facture/generer/:id',authMiddleware,factureControllers.genererFactu
 
 router.get('/factures/:idClient',authMiddleware,factureControllers.getAllFactureByIdClient)
 
-router.get('/notifications/get',authMiddleware,notificationControllers.getNotificationRendezVous)
+router.get('/notifications/:id_client',authMiddleware,notificationControllers.getNotificationsByIdClient)
 
-router.put('/notifications/etat/:id_notification',authMiddleware,notificationControllers.updatEtatNotification)
+router.put('/notification/etat/:id_notification',authMiddleware,notificationControllers.updateEtatNotification)
+
+router.put('/notifications/etat/:clientId',authMiddleware,notificationControllers.updateAllEtatNotification)
 
 
 
