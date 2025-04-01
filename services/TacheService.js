@@ -20,6 +20,23 @@ function getDateFin(rendezVous){
     return dateFin;
 }
 
+async function getTacheDateIndisponible() {
+    try {
+        const taches = await Tache.find({
+            etat: { $in: ["en attente", "en cours"] },
+        }).populate('id_rendez_vous');
+        const datesIndisponibles = taches.map(tache => ({
+            dateDebut: tache.date_debut,  
+            dateFin: tache.date_fin       
+        }));
+        if(datesIndisponibles.length == 0) throw new Error("Aucune date indisponible trouvée");
+        return datesIndisponibles;
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+
 async function getAllTacheMecanicien(mecanicienId){
     try {
         const taches = await Tache.find({
@@ -57,4 +74,4 @@ async function updateEtatTache(id_tache,newEtat,libelle = "Déscription tâche")
 
 
 
-module.exports = {getDateFin,updateEtatTache,getAllTacheMecanicien};
+module.exports = {getDateFin,updateEtatTache,getAllTacheMecanicien,getTacheDateIndisponible};

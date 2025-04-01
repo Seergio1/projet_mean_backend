@@ -14,19 +14,15 @@ const RendezVousSchema = new mongoose.Schema({
 
 
 
+// hita eo raha averina na tsia
 RendezVousSchema.pre("save", function (next) {
-    if (this.isNew || this.isModified("date")) {
-        this.date = new Date(getDateSansDecalageHoraire(this.date)); 
-    }
     if (this.isNew || this.isModified("date_demande")) {
         this.date_demande = new Date(getDateSansDecalageHoraire(this.date_demande)); 
     }
     next();
 });
 
-//il faut mettre ca dans angular pour eviter les decalage horaire sur les dates qui ne sont pas Date.now à l'enregistrement
-// const dateRdv = new Date(utcDate);
-// console.log(dateRdv.toLocaleString("fr-FR", { timeZone: "Africa/Nairobi" }));
+
 
 
 

@@ -1,167 +1,243 @@
-const RendezVous = require("../models/RendezVous");
 const Utilisateur = require("../models/Utilisateur");
 const Service = require("../models/Service");
 const Tache = require("../models/Tache");
+const Utils = require("../services/Utils");
 const { getDateFin } = require("../services/TacheService");
+const { getDateSansDecalageHoraire } = require("./Utils");
+const RendezVous = require("../models/RendezVous");
+const Notification = require("../models/Notification")
+const { sendEmailNotification } = require("./NotificationService");
+const { get } = require("mongoose");
 
-async function prendreRendezVous(clientId, date, vehiculeId, servicesIds) {
+
+/**
+ * Vérifie si une plage horaire est disponible en fonction des rendez-vous existants
+ */
+async function checkDateRdvValidite(dateDebut, dateFin) {
+  const conflit = await Tache.findOne({
+      etat: { $in: ["en attente", "en cours"] },
+      $or: [
+          { date_debut: { $lte: dateDebut }, date_fin: { $gte: dateDebut } },
+          { date_debut: { $lte: dateFin }, date_fin: { $gte: dateFin } },
+          { date_debut: { $gte: dateDebut }, date_fin: { $lte: dateFin } },
+      ],
+  });
+
+  return !conflit; // Retourne `true` si aucune tâche en conflit n'existe
+}
+
+
+// Fonction pour trouver un mécanicien disponible pour la plage horaire
+async function trouverMecanicienDisponible(dateDebut, dateFin) {
+  const mecanicien = await Utilisateur.findOne({
+    role: "mecanicien",
+    _id: {
+      $nin: await Tache.distinct("id_mecanicien", {
+        etat: { $ne: "terminée" },
+        $or: [
+          { date_debut: { $lte: dateDebut }, date_fin: { $gte: dateDebut } },
+          { date_debut: { $lte: dateFin }, date_fin: { $gte: dateFin } },
+          { date_debut: { $gte: dateDebut }, date_fin: { $lte: dateFin } },
+        ],
+      }),
+    },
+  });
+
+  return mecanicien;
+}
+
+// Fonction pour valider le rendez-vous après que le client ait choisi une date
+async function validerRendezVous(
+  clientId,
+  vehiculeId,
+  servicesIds,
+  dateSelectionnee
+) {
   try {
-    // Vérification si l'utilisateur est un client
-    // const client = await Utilisateur.findById(clientId);
+    // console.log(new Date(dateSelectionnee));
     const client = await Utilisateur.findOne({
       _id: clientId,
       vehicules: vehiculeId,
     });
-
     if (!client || client.role !== "client") {
       throw new Error("Client non trouvé ou rôle incorrect");
     }
 
-    // Vérifier si les services existent
+    // Récupérer les services choisis par le client
     const services = await Service.find({ _id: { $in: servicesIds } });
     if (services.length !== servicesIds.length) {
       throw new Error("Certains services spécifiés sont invalides");
     }
+    // Calcul de la durée totale des services
+    const dureeTotaleMinutes = services.reduce((total, service) => total + service.duree,0);
+    const prixTotale = services.reduce((total, service) => total + service.prix,0);
+   
+    const dateDebut = new Date(dateSelectionnee);
+    
+    
+    
+    if (!Utils.checkHeureDeTravail(dateDebut)) throw new Error("La date selectionnée n'est pas dans nos horaires de travail");
+    
+    
 
-    // check disponibilité date
-    const rendezVousValide = await Tache.find({
-      date: {$gte:date},
-      etat:""
-    })
+    const dateFin = new Date(dateDebut.getTime() + dureeTotaleMinutes * 60000); // Ajout en minutes
+
+    if (!Utils.checkHeureDeTravail(dateFin)) throw new Error("La date de fin de tâche calculée n'est pas dans nos horaires de travail");
+
 
     
+    const dateDebutFinal = getDateSansDecalageHoraire(dateDebut);
+    const dateFinFinal = getDateSansDecalageHoraire(dateFin);
+
+    // Vérifier la disponibilité du créneau sélectionné
+    const disponible = await checkDateRdvValidite(dateDebutFinal, dateFinFinal);
+    if (!disponible) {
+      throw new Error("Ce créneau horaire est déjà occupé.");
+    }
+
+    
+
+    // Trouver un mécanicien disponible
+    const mecanicienDisponible = await trouverMecanicienDisponible(
+      dateDebutFinal,
+      dateFinFinal
+    );
+    if (!mecanicienDisponible) {
+      throw new Error("Aucun mécanicien disponible pour cette plage horaire.");
+    }
 
     // Création du rendez-vous
     const rendezVous = new RendezVous({
       id_client: clientId,
       id_vehicule: vehiculeId,
-      date: date,
+      date: dateDebutFinal,
       services: servicesIds, // Liste des services demandés
       etat: "en attente", // L'état initial est 'en attente'
     });
-
+    console.log(rendezVous);
+    
     await rendezVous.save();
+    // Création de la tâche pour le mécanicien
+    const tache = new Tache({
+      id_mecanicien: mecanicienDisponible._id,
+      id_vehicule: vehiculeId,
+      libelle: "Déscription tâche",
+      prix: prixTotale,
+      id_rendez_vous: rendezVous._id,
+      date_debut: dateDebutFinal,
+      date_fin: dateFinFinal,
+      etat: "en attente",
+    });
+    console.log(tache);
+    
+    await tache.save();
+
+    console.log(
+      "Rendez-vous validé et tâche créée avec le mécanicien :",
+      mecanicienDisponible.nom
+    );
     return rendezVous; // Retourne le rendez-vous créé
   } catch (error) {
     throw new Error(error.message);
   }
 }
 
-// pour eviter qu'un meca n'est pas déja associé à une tache pour la date de ce rendez vous
-async function estMecanicienDisponiblePourTache(id_mecanicien, date_rdv) {
-  date_rdv = new Date(date_rdv);
-  const conflit = await Tache.findOne({
-    id_mecanicien: id_mecanicien,
-    etat: { $in: ["en attente", "en cours"] },
-    date_debut: { $lte: date_rdv },
-    date_fin: { $gte: date_rdv },
-  });
-  // console.log("Vérification de disponibilité :", { id_mecanicien, date_rdv, conflit });
-  return !conflit; // Retourne `true` si aucune tâche en conflit n'existe
-}
+async function annulerRendezVous(rendezVousId) {
+  try {
+    // Trouver le rendez-vous par son ID
+    const rendezVous = await RendezVous.findById(rendezVousId);
+      
+    if (!rendezVous) {
+      console.log("Rendez-vous non trouvé.");
+      return false;
+    }
 
-async function validerRendezVous(managerId, rendezVousId, mecanicienId, etat) {
-  // Vérification si l'utilisateur est un manager
-  const manager = await Utilisateur.findById(managerId);
-  if (!manager || manager.role !== "manager") {
-    throw new Error("Manager non trouvé ou rôle incorrect");
-  }
-
-  // Vérification et assignation du mécanicien
-  const mecanicien = await Utilisateur.findById(mecanicienId);
-  if (!mecanicien || mecanicien.role !== "mecanicien") {
-    throw new Error("Mécanicien non valide ou non trouvé");
-  }
-
-
-  // Vérification si le rendez-vous existe
-  const rendezVous = await RendezVous.findById(rendezVousId).populate(
-    "services"
-  );
-  if (!rendezVous) {
-    throw new Error("Rendez-vous non trouvé");
-  }
-
-  let tache = null;
-  const disponible = await estMecanicienDisponiblePourTache(
-    mecanicien._id,
-    rendezVous.date
-  );
-
-  if (disponible) {
-    rendezVous.id_mecanicien = mecanicien._id;
-
-    // Validation : Changer l'état à "accepté" et assigner un mécanicien
-    rendezVous.etat = etat;
-    console.log(rendezVous.date);
-    await rendezVous.save();
-
-    // Création de la tâche
-    tache = new Tache({
-      id_mecanicien: mecanicien._id,
-      id_vehicule: rendezVous.id_vehicule,
-      id_rendez_vous: rendezVous._id,
-      libelle: "Travail à réaliser sur le véhicule " + rendezVous.id_vehicule, // Description de la tâche, tu peux personnaliser
-      prix: rendezVous.services.reduce(
-        (total, service) => total + service.prix,
-        0
-      ), // Calcul du prix à partir des services
-      etat: "en attente", // L'état initial de la tâche
-      date_debut: rendezVous.date, // Date du rendez-vous pour la tâche
-      date_fin: getDateFin(rendezVous),
+    // Supprimer la tâche associée à ce rendez-vous
+    const tache = await Tache.findOneAndDelete({
+      id_rendez_vous: rendezVousId,
+      etat: "en attente"
     });
 
-    console.log(rendezVous.date);
+    if (!tache) {
+      // throw new Error("Aucune tâche associée à ce rendez-vous");
+      console.log("Aucune tâche associée à ce rendez-vous");
+      return false;
+    } else {
+      console.log("Tâche associée supprimée.");
+      // Changer l'état du rendez-vous à "annulé"
+      rendezVous.etat = "annulé";
+      await rendezVous.save();
+      // Retourner le résultat ou une confirmation
+      console.log("Rendez-vous annulé avec succès.",rendezVous);
+    }
 
-    console.log(getDateFin(rendezVous));
-
-    // Enregistrer les modifications dans le rendez-vous
     
+    return true;
+  } catch (error) {
+    console.error("Erreur lors de l'annulation du rendez-vous:", error);
+    // throw new Error("Erreur lors de l'annulation du rendez-vous.");
+  }
+}
 
-    // Sauvegarder la tâche
-    await tache.save();
-    return { rendezVous, tache }; // Retourner le rendez-vous et la tâche créée
-  } else {
-    throw new Error("Ce mécanicien est déjà associé à une tâche");
+// Fonction pour récupérer les rendez-vous dans les prochaines 24h
+async function getRendezVousProche() {
+  try {
+    const now = new Date();
+    const next24h = new Date();
+    next24h.setHours(now.getHours() + 24);
+
+    const appointments = await RendezVous.find({
+      date: { $gte: now, $lte: next24h },
+      etat: "accepté",
+    }).populate("id_client");
+
+    return appointments;
+  } catch (error) {
+    console.error("❌ Erreur lors de la récupération des rendez-vous:", error);
+    return [];
   }
 }
 
 async function refuserRendezVousAuto() {
   try {
     const today = new Date();
-    today.setUTCHours(9, 0, 0, 0);
-    const rendezVousInvalide = await RendezVous.find({
-      // date: {$gte: today},
-      etat: "en attente",
-    });
-    
-    console.log("aujourd'hui ",today);
-    for (let index = 0; index < rendezVousInvalide.length; index++) {
-      const rdv = rendezVousInvalide[index];
+    let annulation = false;
+    today.setUTCHours(0, 0, 0, 0);
+    const rendezVous = await RendezVous.find({
+      etat: { $in: ["en attente", "accepté"] },
+    }).populate('id_client');
+
+    console.log("aujourd'hui ", today);
+    for (const rdv of rendezVous) {
+
+      const rdvDate = new Date(rdv.date);
+      rdvDate.setUTCHours(0, 0, 0, 0);
+
       if (rdv.date < today) {
-        
-        console.log("date rendez vous ",rdv.date);
-        console.log("Rendez vous invalide", rdv);
+        annulation = await annulerRendezVous(rdv);
+        if(annulation){
+          sendEmailNotification(rdv.id_client.email, Utils.formatDate(rdv.date), "annulation");
+          const notification = new Notification({
+                          titre: "Annulation de votre rendez-vous",
+                          message: `Votre rendez vous du ${Utils.formatDate(rdv.date)} a été annulé`,
+                          id_client: rdv.id_client,
+                          id_rendez_vous: rdv._id
+                      });
+          await notification.save();
+          console.log(`Annulation du rendez-vous ID: ${rdv._id} (Date: ${rdv.date})`);
+        }
       } else {
-        console.log("date rendez vous ",rdv.date);
-        console.log("Rendez vous valide", rdv);
+        console.log(`Rendez-vous encore valide ID: ${rdv._id} (Date: ${rdv.date})`);
       }
     }
-
-    // if (rendezVousInvalide.length <= 0) {
-    //   console.log("📅 Aucun rendez vous");
-    // } else {
-    //   console.log("📅 Rendez-vous après aujourd'hui à 9h00 ");
-    // }
-
-    // return rendezVousInvalide;
   } catch (error) {
     throw new Error(error);
   }
 }
 
 module.exports = {
-  prendreRendezVous,
   validerRendezVous,
-  refuserRendezVousAuto,
+  getRendezVousProche,
+  annulerRendezVous,
+  refuserRendezVousAuto
 };
