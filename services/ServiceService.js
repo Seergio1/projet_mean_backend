@@ -10,6 +10,16 @@ const getAllServicesById = async (ids_services) => {
     }
 };
 
+const getAllServices = async () => {
+    try {
+        const services = await Service.find();
+        return services;
+    } catch (error) {
+        console.error("Erreur lors de la récupération de tous les services :", error);
+        throw error;
+    }
+};
+
 // pour tous les vehicules du client
 async function getAllHistoriqueServiceClient(id_client) {
     try {
@@ -74,4 +84,4 @@ async function getHistoriqueServiceClientVehicule(id_client, id_vehicule) {
 //     }
 // };
 
-module.exports = {getAllHistoriqueServiceClient,getHistoriqueServiceClientVehicule,getAllServicesById};
+module.exports = {getAllHistoriqueServiceClient,getHistoriqueServiceClientVehicule,getAllServicesById,getAllServices};

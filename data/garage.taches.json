@@ -1,0 +1,21 @@
+[{
+  "_id": {
+    "$oid": "67d31c5b6b525a0e752b0920"
+  },
+  "id_mecanicien": {
+    "$oid": "67d1ba0cbd69d67516934f7a"
+  },
+  "id_vehicule": {
+    "$oid": "67d30e0b8a5297b7577f535f"
+  },
+  "libelle": "Travail à réaliser sur le véhicule",
+  "prix": 20000,
+  "etat": "terminée",
+  "date": {
+    "$date": "2025-03-15T07:00:00.000Z"
+  },
+  "__v": 0,
+  "id_rendez_vous": {
+    "$oid": "67d314764881e11ac40c694c"
+  }
+}]

@@ -59,9 +59,31 @@ function checkHeureDeTravail(date) {
     const hour = date.getHours();
     const minutes = date.getMinutes();
 
-    // Vérifier si l'heure est entre 8h-12h ou 13h-17h
-    return (hour >= 8 && hour < 12) || (hour >= 13 && hour < 17);
-};
+    // Vérifier si l'heure est entre 8h-12h (sans inclure 12h) ou entre 13h-17h
+    return ((hour >= 8 && hour < 12) || (hour >= 13 && hour < 17)) && !(hour === 12 && minutes === 0);
+}
+//à mettre dans rendezVous à service au cas ou
+// async function trouverDatesDisponibles(dureeTotaleMinutes, dateSelectionnee) {
+//   const dateActuelle = getDateSansDecalageHoraire(new Date(dateSelectionnee));
+//   if (!Utils.checkHeureDeTravail(dateActuelle))
+//     throw new Error("La date demandée n'est pas dans les horaires de travail");
+
+//   // Chercher des créneaux disponibles dans les prochaines heures (exemple de 4 créneaux espacés de 1 heure y compris la date selectionnée sinon 3)
+//   let datesDisponibles = [];
+//   datesDisponibles.push({});
+//   for (let i = 0; i <= 3; i++) {
+//     let dateDebut = new Date(dateActuelle.getTime() + i * 60 * 60000); // ième créneau horaire
+//     let dateFin = new Date(dateDebut.getTime() + dureeTotaleMinutes * 60000);
+
+//     // Vérifier si le créneau est disponible
+//     const disponible = await checkDateRdvValidite(dateDebut, dateFin);
+//     if (disponible) {
+//       datesDisponibles.push({ dateDebut, dateFin });
+//     }
+//   }
+
+//   return datesDisponibles;
+// }
 
 function formatDate(dateString) {
     const date = new Date(dateString); // Convertit la date en objet Date

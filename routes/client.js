@@ -6,6 +6,8 @@ const devisControllers = require('../controllers/DevisControllers')
 const serviceControllers = require('../controllers/serviceControllers')
 const factureControllers = require('../controllers/factureControllers')
 const notificationControllers = require('../controllers/notificationControllers')
+const vehiculeControllers = require('../controllers/vehiculeControllers')
+const tacheControllers = require('../controllers/tacheControllers')
 
 
 const router = express.Router();
@@ -15,7 +17,7 @@ router.get('/test_client', authMiddleware, (req, res) => {
 });
 
 
-router.post('/rendez-vous/proposition',authMiddleware,rendezVousControllers.proposerRendezVous)
+// router.post('/rendez-vous/proposition',authMiddleware,rendezVousControllers.proposerRendezVous)
 
 router.post('/rendez-vous/validation',authMiddleware,rendezVousControllers.validerRendezVous)
 
@@ -27,6 +29,12 @@ router.post('/devis/historique_tous_vehicule',authMiddleware,devisControllers.ge
 
 router.post('/devis/historique_vehicule',authMiddleware,devisControllers.getHistoriqueDevisClientVehicule)
 
+router.get('/vehicules/:utilisateurId',authMiddleware,vehiculeControllers.getVehicules);
+
+router.get('/services',authMiddleware,serviceControllers.getAllService)
+
+router.get('/rendez-vous/indisponible',authMiddleware,tacheControllers.getTacheDateIndisponible)
+
 router.post('/service/historique_tous_vehicule',authMiddleware,serviceControllers.getAllHistoriqueServiceClient)
 
 router.post('/service/historique_vehicule',authMiddleware,serviceControllers.getHistoriqueServiceClientVehicule)
@@ -37,6 +45,7 @@ router.get('/facture/generer/:id',authMiddleware,factureControllers.genererFactu
 
 router.get('/factures/:idClient',authMiddleware,factureControllers.getAllFactureByIdClient)
 
+// integrer le 30/03/25
 router.get('/notifications/:id_client',authMiddleware,notificationControllers.getNotificationsByIdClient)
 
 router.put('/notification/etat/:id_notification',authMiddleware,notificationControllers.updateEtatNotification)

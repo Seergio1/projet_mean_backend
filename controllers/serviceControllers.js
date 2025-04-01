@@ -1,4 +1,16 @@
-const { getAllHistoriqueServiceClient, getHistoriqueServiceClientVehicule } = require("../services/ServiceService");
+const { getAllHistoriqueServiceClient, getHistoriqueServiceClientVehicule,getAllServices } = require("../services/ServiceService");
+
+exports.getAllService = async (req,res) =>{
+    try {
+        const result = await getAllServices();
+        res.status(201).json({ message: "Récupération de tous les services a été faite avec succès", data: result });
+    } catch (error) {
+        console.error("Erreur lors de la récupération de tous les services:", error);
+
+        // Renvoyer une réponse d'erreur générique
+        res.status(500).json({ message: "Erreur lors de la récupération de tous les services." });
+    }
+}
 
 exports.getAllHistoriqueServiceClient = async (req,res) =>{
     try {

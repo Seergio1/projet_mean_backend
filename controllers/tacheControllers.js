@@ -1,4 +1,4 @@
-const {updateEtatTache} = require('../services/TacheService')
+const {updateEtatTache,getTacheDateIndisponible,getAllTacheMecanicien} = require('../services/TacheService')
 exports.updateEtatTache = async (req,res) =>{
     try {
         const {mecanicienId,newEtat,libelle} = req.body;
@@ -23,7 +23,7 @@ exports.getAllTacheMecanicien = async (req,res) =>{
         if (!mecanicienId) {
             return res.status(400).json({ message: "L'Id du mécanicien doit être fournise" });
         }
-        const result = await this.getAllTacheMecanicien(mecanicienId);
+        const result = await getAllTacheMecanicien(mecanicienId);
 
         res.status(201).json({ message: "Les tâches du mécanicien ont été recuperées avec succès", data: result });
     } catch (error) {
@@ -31,5 +31,19 @@ exports.getAllTacheMecanicien = async (req,res) =>{
 
         // Renvoyer une réponse d'erreur générique
         res.status(500).json({ message: "Erreur lors de la recupération des tâche du mécanicien." });
+    }
+}
+
+exports.getTacheDateIndisponible = async (req,res) =>{
+    try {
+       
+        const result = await getTacheDateIndisponible()
+
+        res.status(201).json({ message: "Les dates indisponibles ont été recuperées avec succès", data: result });
+    } catch (error) {
+        console.error("Erreur lors de la recupération des dates indisponibles:", error);
+
+        // Renvoyer une réponse d'erreur générique
+        res.status(500).json({ message: "Erreur lors de la recupération des dates indisponibles." });
     }
 }
