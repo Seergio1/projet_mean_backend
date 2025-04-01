@@ -12,12 +12,15 @@ exports.validerRendezVous = async (req, res) => {
         if (servicesIds.length == 0) {
             return res.status(400).json({ message: "Veuillez choisir au moins un service" });
         }
+        
+        
 
-        const selectedDate = new Date(dateSelectionnee);
-        const currentDate = new Date();
+        const selectedDate = getDateSansDecalageHoraire(new Date(dateSelectionnee));
+        const currentDate = getDateSansDecalageHoraire(new Date());
+        
 
         if (selectedDate < currentDate) {
-            return res.status(400).json({ message: "La date sélectionnée est dans le passé. Veuillez choisir une date future." });
+            return res.status(400).json({ message: "La date sélectionnée est dans le passé. Veuillez choisir une date future." , data: {dateSelectionnee: selectedDate, dateActuelle: currentDate} });
         }
 
         const result = await validerRendezVous(clientId, vehiculeId, servicesIds,dateSelectionnee);
@@ -28,7 +31,7 @@ exports.validerRendezVous = async (req, res) => {
        
         console.error("Erreur lors de la validation de rendez-vous:", error.message);
 
-        res.status(500).json({ message: "Erreur lors de la validation de rendez-vous: "+error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 

@@ -7,6 +7,7 @@ const { getDateSansDecalageHoraire } = require("./Utils");
 const RendezVous = require("../models/RendezVous");
 const Notification = require("../models/Notification")
 const { sendEmailNotification } = require("./NotificationService");
+const { get } = require("mongoose");
 
 
 /**
@@ -53,6 +54,7 @@ async function validerRendezVous(
   dateSelectionnee
 ) {
   try {
+    // console.log(new Date(dateSelectionnee));
     const client = await Utilisateur.findOne({
       _id: clientId,
       vehicules: vehiculeId,
@@ -69,24 +71,36 @@ async function validerRendezVous(
     // Calcul de la durée totale des services
     const dureeTotaleMinutes = services.reduce((total, service) => total + service.duree,0);
     const prixTotale = services.reduce((total, service) => total + service.prix,0);
-    const dateDebut = getDateSansDecalageHoraire(new Date(dateSelectionnee));
-
-    if (!Utils.checkHeureDeTravail(dateDebut)) throw new Error("La date de début demandée n'est pas dans les horaires de travail");
+   
+    const dateDebut = new Date(dateSelectionnee);
+    
+    
+    
+    if (!Utils.checkHeureDeTravail(dateDebut)) throw new Error("La date selectionnée n'est pas dans nos horaires de travail");
+    
+    
 
     const dateFin = new Date(dateDebut.getTime() + dureeTotaleMinutes * 60000); // Ajout en minutes
 
-    if (!Utils.checkHeureDeTravail(dateFin)) throw new Error("La date de fin calculée n'est pas dans les horaires de travail");
+    if (!Utils.checkHeureDeTravail(dateFin)) throw new Error("La date de fin de tâche calculée n'est pas dans nos horaires de travail");
+
+
+    
+    const dateDebutFinal = getDateSansDecalageHoraire(dateDebut);
+    const dateFinFinal = getDateSansDecalageHoraire(dateFin);
 
     // Vérifier la disponibilité du créneau sélectionné
-    const disponible = await checkDateRdvValidite(dateDebut, dateFin);
+    const disponible = await checkDateRdvValidite(dateDebutFinal, dateFinFinal);
     if (!disponible) {
       throw new Error("Ce créneau horaire est déjà occupé.");
     }
 
+    
+
     // Trouver un mécanicien disponible
     const mecanicienDisponible = await trouverMecanicienDisponible(
-      dateDebut,
-      dateFin
+      dateDebutFinal,
+      dateFinFinal
     );
     if (!mecanicienDisponible) {
       throw new Error("Aucun mécanicien disponible pour cette plage horaire.");
@@ -96,10 +110,12 @@ async function validerRendezVous(
     const rendezVous = new RendezVous({
       id_client: clientId,
       id_vehicule: vehiculeId,
-      date: date,
+      date: dateDebutFinal,
       services: servicesIds, // Liste des services demandés
       etat: "en attente", // L'état initial est 'en attente'
     });
+    console.log(rendezVous);
+    
     await rendezVous.save();
     // Création de la tâche pour le mécanicien
     const tache = new Tache({
@@ -108,11 +124,12 @@ async function validerRendezVous(
       libelle: "Déscription tâche",
       prix: prixTotale,
       id_rendez_vous: rendezVous._id,
-      date_debut: dateDebut,
-      date_fin: dateFin,
+      date_debut: dateDebutFinal,
+      date_fin: dateFinFinal,
       etat: "en attente",
     });
-
+    console.log(tache);
+    
     await tache.save();
 
     console.log(

@@ -53,37 +53,57 @@ function getDateSansDecalageHoraire(date_initial) {
 
 function checkHeureDeTravail(date) {
     if (!(date instanceof Date)) {
-        throw new Error("La date séléctionnée n'est pas une date valide.");
+        date = new Date(date);
+        if (isNaN(date.getTime())) {
+            throw new Error("La date sélectionnée n'est pas valide.");
+        }
     }
 
     const hour = date.getHours();
     const minutes = date.getMinutes();
+    // console.log(hour, minutes);
+    
 
-    // Vérifier si l'heure est entre 8h-12h (sans inclure 12h) ou entre 13h-17h
     return ((hour >= 8 && hour < 12) || (hour >= 13 && hour < 17)) && !(hour === 12 && minutes === 0);
 }
-//à mettre dans rendezVous à service au cas ou
-// async function trouverDatesDisponibles(dureeTotaleMinutes, dateSelectionnee) {
-//   const dateActuelle = getDateSansDecalageHoraire(new Date(dateSelectionnee));
-//   if (!Utils.checkHeureDeTravail(dateActuelle))
-//     throw new Error("La date demandée n'est pas dans les horaires de travail");
 
-//   // Chercher des créneaux disponibles dans les prochaines heures (exemple de 4 créneaux espacés de 1 heure y compris la date selectionnée sinon 3)
-//   let datesDisponibles = [];
-//   datesDisponibles.push({});
-//   for (let i = 0; i <= 3; i++) {
-//     let dateDebut = new Date(dateActuelle.getTime() + i * 60 * 60000); // ième créneau horaire
-//     let dateFin = new Date(dateDebut.getTime() + dureeTotaleMinutes * 60000);
 
-//     // Vérifier si le créneau est disponible
-//     const disponible = await checkDateRdvValidite(dateDebut, dateFin);
-//     if (disponible) {
-//       datesDisponibles.push({ dateDebut, dateFin });
+/*
+Si la tâche commence avant 17h mais finit après 17h
+
+Si la tâche est coupée par la pause de midi (12h-13h)
+
+Si la tâche dépasse l’heure de fermeture
+*/
+// function checkHeureDeTravail(dateDebut, dureeMinutes) {
+//     const dateFin = new Date(dateDebut.getTime() + dureeMinutes * 60000);
+    
+//     const heureDebut = dateDebut.getHours();
+//     const minuteDebut = dateDebut.getMinutes();
+//     const heureFin = dateFin.getHours();
+//     const minuteFin = dateFin.getMinutes();
+
+//     // Vérifier que la tâche est bien dans les horaires de travail (8h-12h et 13h-17h)
+//     const estDansHorairesTravail = 
+//         (heureDebut >= 8 && heureDebut < 12) || (heureDebut >= 13 && heureDebut < 17);
+//     const estFinDansHorairesTravail = 
+//         (heureFin >= 8 && heureFin < 12) || (heureFin >= 13 && heureFin < 17);
+
+//     if (!estDansHorairesTravail || !estFinDansHorairesTravail) {
+//         return false; // Tâche hors des horaires de travail
 //     }
-//   }
 
-//   return datesDisponibles;
+//     // Vérifier que la tâche ne chevauche pas la pause midi (12h-13h)
+//     const chevauchePauseMidi = (heureDebut < 12 && heureFin >= 12);
+    
+//     if (chevauchePauseMidi) {
+//         return false;
+//     }
+
+//     return true; // La tâche est valide dans les horaires de travail
 // }
+
+
 
 function formatDate(dateString) {
     const date = new Date(dateString); // Convertit la date en objet Date
