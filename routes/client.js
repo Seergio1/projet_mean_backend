@@ -22,7 +22,7 @@ router.put('/commentaire', commentaireControllers.insertCommentaire);
 
 router.get('/commentaires', commentaireControllers.findAllCommentaire);
 router.post('/devis/demande',authMiddleware,devisControllers.demandeDevis) //
-router.post('/rendez-vous/proposition',authMiddleware,rendezVousControllers.proposerRendezVous)
+// router.post('/rendez-vous/proposition',authMiddleware,rendezVousControllers.proposerRendezVous)
 // router.post('/rendez-vous/proposition',authMiddleware,rendezVousControllers.proposerRendezVous)
 
 router.post('/rendez-vous/validation',authMiddleware,rendezVousControllers.validerRendezVous)

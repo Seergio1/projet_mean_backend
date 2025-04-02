@@ -2,9 +2,11 @@ const commentaireService = require('../services/CommentaireService');
 
 exports.insertCommentaire = async (req, res) => {
     try {
-        const {id_utilisateurs, libelle} = req.body;
+        console.log('insertion commentaire')
 
-        const newCommentaire = await commentaireService.insertCommentaire(id_utilisateurs, libelle);
+        const {id_utilisateur ,libelle} = req.body;
+
+        const newCommentaire = await commentaireService.insertCommentaire(id_utilisateur, libelle);
         res.status(201).json({ message: "insertion commentaire avec succes", data: newCommentaire });
 
     } catch (error) {

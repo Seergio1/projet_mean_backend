@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 async function getAllMouvementStock() {
     let resultat = null;
     try {
-        resultat = MouvementStock.find();
+        resultat = MouvementStock.find().populate('id_Article');
 
         return resultat;
     } catch (error) {
@@ -94,12 +94,12 @@ async function getStockArticle(id_Article) {
     } 
 }
 
-const getStockAvecDetails = async (id_Article) => {
+const getStockAvecDetails = async (nomArticle) => {
     try {
         const result = await Article.aggregate([
-            // {
-            //     $match: { _id: new mongoose.Types.ObjectId(id_Article) } // Sélectionner l'article
-            // },
+            {
+                $match: { nom: { $regex: new RegExp(nomArticle, "i") } } // Sélectionner l'article
+            },
             {
                 $lookup: {
                     from: "mouvementstocks", // Assurez-vous que le nom est correct

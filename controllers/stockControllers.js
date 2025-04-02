@@ -30,9 +30,11 @@ exports.insertMouvementStock = async (req, res) => {
 
 exports.getMouvementArticle = async (req, res) => {
     try {
-        const {id_Article} = req.body;
+        const nomArticle = req.query.nomArticle;
 
-        const mouvementArticle = await stockService.getStockAvecDetails(id_Article);
+        // console.log("nom de la'rticle"+ nomArticle);
+
+        const mouvementArticle = await stockService.getStockAvecDetails(nomArticle);
 
         res.status(201).json({ message: "get mouvement article succes", data : mouvementArticle});
 
