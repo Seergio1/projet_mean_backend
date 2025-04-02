@@ -1,4 +1,4 @@
-const {validerRendezVous, annulerRendezVous} = require('../services/RendezVousService');
+const {validerRendezVous, annulerRendezVous,getAllRendezVousClient} = require('../services/RendezVousService');
 const { getDateSansDecalageHoraire } = require('../services/Utils');
 
 
@@ -35,10 +35,25 @@ exports.validerRendezVous = async (req, res) => {
     }
 };
 
+exports.getAllRendezVousClient = async (req,res) => {
+    try {
+        const { idClient } = req.params;
+        if (!idClient ) {
+            return res.status(400).json({ message: "L'id du client est requis" });
+        }
+        const result = await getAllRendezVousClient(idClient);
+        res.status(201).json({ message: "Les rendez vous ont été récupérés avec succès", data: result });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 exports.annulerRendezVous = async (req, res) => {
     try {
         const { rendezVousId } = req.params; 
-
+        if (!rendezVousId ) {
+            return res.status(400).json({ message: "L'id du rendez vous est requis" });
+        }
         const result = await annulerRendezVous(rendezVousId);
 
         res.status(200).json(result); 

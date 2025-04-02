@@ -142,6 +142,22 @@ async function validerRendezVous(
   }
 }
 
+async function getAllRendezVousClient(clientId){
+  try {
+    const rendezVous = await RendezVous.find({id_client:clientId})
+    .populate("id_vehicule")
+    .populate("id_mecanicien")
+    .populate("services")
+    if (!rendezVous) {
+      throw new Error("Aucun rendez vous trouvé")
+    }
+    return rendezVous;
+  } catch (error) {
+    console.log(`Erreur lors de la recupération des rendez du client ${clientId}`,error.message);
+    throw new Error(error)
+  }
+}
+
 async function annulerRendezVous(rendezVousId) {
   try {
     // Trouver le rendez-vous par son ID
@@ -239,5 +255,6 @@ module.exports = {
   validerRendezVous,
   getRendezVousProche,
   annulerRendezVous,
-  refuserRendezVousAuto
+  refuserRendezVousAuto,
+  getAllRendezVousClient
 };
