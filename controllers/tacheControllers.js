@@ -1,4 +1,4 @@
-const {updateEtatTache,getTacheDateIndisponible,getAllTacheMecanicien} = require('../services/TacheService')
+const {updateEtatTache,getTacheDateIndisponible,getAllTacheMecanicien, getEtatTacheRendezVous} = require('../services/TacheService')
 exports.updateEtatTache = async (req,res) =>{
     try {
         const {mecanicienId,newEtat,libelle} = req.body;
@@ -47,3 +47,29 @@ exports.getTacheDateIndisponible = async (req,res) =>{
         res.status(500).json({ message: "Erreur lors de la recupération des dates indisponibles." });
     }
 }
+
+exports.getEtatTacheRendezVous = async (req, res) => {
+    try {
+        const { rendezVousId } = req.params; // Récupération de l'ID du rendez-vous depuis l'URL
+        // console.log(rendezVousId);
+        
+        if (!rendezVousId) {
+            return res.status(400).json({ message: "L'ID du rendez-vous est requis." });
+        }
+
+        const tache = await getEtatTacheRendezVous(rendezVousId);
+
+        if (tache==null) {
+            return res.status(404).json({ message: "Aucune tâche associée à ce rendez-vous." });
+        }
+
+        // console.log(tache);
+        
+
+
+        res.status(200).json({ tache });
+    } catch (error) {
+        console.error("Erreur lors de la récupération de l'état de la tâche :", error);
+        res.status(500).json({ message: "Erreur lors de la récupération de l'état de la tâche." });
+    }
+};

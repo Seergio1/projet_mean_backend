@@ -1,0 +1,24 @@
+[{
+  "_id": {
+    "$oid": "67d30ee48a5297b7577f5367"
+  },
+  "nom": "Vidange",
+  "duree": 60,
+  "prix": 20000
+},
+{
+  "_id": {
+    "$oid": "67edadd2b35e9ab1dece8ce9"
+  },
+  "nom": "Gonflage pneu",
+  "duree": 15,
+  "prix": 2500
+},
+{
+  "_id": {
+    "$oid": "67edb288b35e9ab1dece8cea"
+  },
+  "nom": "Diagnostique",
+  "duree": 45,
+  "prix": 150000
+}]

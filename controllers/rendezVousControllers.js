@@ -1,4 +1,4 @@
-const {validerRendezVous, annulerRendezVous} = require('../services/RendezVousService');
+const {validerRendezVous, annulerRendezVous,getAllRendezVousClient} = require('../services/RendezVousService');
 const { getDateSansDecalageHoraire } = require('../services/Utils');
 
 
@@ -35,13 +35,35 @@ exports.validerRendezVous = async (req, res) => {
     }
 };
 
+exports.getAllRendezVousClient = async (req,res) => {
+    try {
+        const { idClient } = req.params;
+        if (!idClient ) {
+            return res.status(400).json({ message: "L'id du client est requis" });
+        }
+        const result = await getAllRendezVousClient(idClient);
+        res.status(201).json({ message: "Les rendez vous ont été récupérés avec succès", data: result });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 exports.annulerRendezVous = async (req, res) => {
     try {
         const { rendezVousId } = req.params; 
+        const {etat} = req.body;
+        if (!rendezVousId ) {
+            return res.status(400).json({ message: "L'id du rendez vous est requis" });
+        }
+        const result = await annulerRendezVous(rendezVousId,etat);
 
-        const result = await annulerRendezVous(rendezVousId);
-
-        res.status(200).json(result); 
+        if (result && result.message) {
+            // Retourner le message et définir le statut HTTP en fonction de success
+            return res.status(result.success ? 200 : 400).json({ message: result.message });
+          } else {
+            // En cas de réponse invalide de la fonction annulerRendezVous
+            return res.status(500).json({ message: "Réponse invalide de la fonction d'annulation." });
+          }
     } catch (error) {
         console.error("Erreur lors de l'annulation du rendez-vous:", error);
         res.status(500).json({ message: "Erreur lors de l'annulation du rendez-vous." });
