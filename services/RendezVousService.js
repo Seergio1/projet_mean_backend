@@ -112,7 +112,7 @@ async function validerRendezVous(
       id_vehicule: vehiculeId,
       date: dateDebutFinal,
       services: servicesIds, // Liste des services demandés
-      etat: "en attente", // L'état initial est 'en attente'
+      etat: "accepté", // L'état initial est 'en attente'
     });
     console.log(rendezVous);
     
@@ -158,14 +158,14 @@ async function getAllRendezVousClient(clientId){
   }
 }
 
-async function annulerRendezVous(rendezVousId) {
+async function annulerRendezVous(rendezVousId, type) {
   try {
     // Trouver le rendez-vous par son ID
     const rendezVous = await RendezVous.findById(rendezVousId);
-      
+    
     if (!rendezVous) {
       console.log("Rendez-vous non trouvé.");
-      return false;
+      return { success: false, message: "Rendez-vous non trouvé." };
     }
 
     // Supprimer la tâche associée à ce rendez-vous
@@ -175,23 +175,20 @@ async function annulerRendezVous(rendezVousId) {
     });
 
     if (!tache) {
-      // throw new Error("Aucune tâche associée à ce rendez-vous");
-      console.log("Aucune tâche associée à ce rendez-vous");
-      return false;
+      console.log("Les tâches associées à ce rendez-vous sont en cours ou sont déjà terminées.");
+      return { success: false, message: "Les tâches associées à ce rendez-vous sont en cours ou sont déjà terminées." };
     } else {
       console.log("Tâche associée supprimée.");
-      // Changer l'état du rendez-vous à "annulé"
-      rendezVous.etat = "annulé";
+      // Changer l'état du rendez-vous à "annulé" ou "accepté"
+      rendezVous.etat = type;
       await rendezVous.save();
-      // Retourner le résultat ou une confirmation
-      console.log("Rendez-vous annulé avec succès.",rendezVous);
+      console.log("Rendez-vous annulé avec succès.", rendezVous);
     }
 
-    
-    return true;
+    return { success: true, message: "Rendez-vous annulé avec succès." };
   } catch (error) {
     console.error("Erreur lors de l'annulation du rendez-vous:", error);
-    // throw new Error("Erreur lors de l'annulation du rendez-vous.");
+    return { success: false, message: "Erreur lors de l'annulation du rendez-vous." };
   }
 }
 
@@ -216,38 +213,43 @@ async function getRendezVousProche() {
 
 async function refuserRendezVousAuto() {
   try {
-    const today = new Date();
-    let annulation = false;
-    today.setUTCHours(0, 0, 0, 0);
-    const rendezVous = await RendezVous.find({
-      etat: { $in: ["en attente", "accepté"] },
-    }).populate('id_client');
+      const now = getDateSansDecalageHoraire(new Date());
 
-    console.log("aujourd'hui ", today);
-    for (const rdv of rendezVous) {
+      // Récupérer tous les RDV non confirmés et dont la date est passée
+      const rendezVous = await RendezVous.find({
+          date: { $lt: now }, // RDV déjà passé
+          etat: "accepté" // RDV accepté mais non confirmé
+      }).populate('id_client');
 
-      const rdvDate = new Date(rdv.date);
-      rdvDate.setUTCHours(0, 0, 0, 0);
+      for (const rdv of rendezVous) {
+          // Vérifier si une tâche en attente existe
+          const tachesEnAttente = await Tache.find({ 
+              id_rendez_vous: rdv._id, 
+              etat: "en attente" 
+          });
 
-      if (rdv.date < today) {
-        annulation = await annulerRendezVous(rdv);
-        if(annulation){
-          sendEmailNotification(rdv.id_client.email, Utils.formatDate(rdv.date), "annulation");
-          const notification = new Notification({
-                          titre: "Annulation de votre rendez-vous",
-                          message: `Votre rendez vous du ${Utils.formatDate(rdv.date)} a été annulé`,
-                          id_client: rdv.id_client,
-                          id_rendez_vous: rdv._id
-                      });
-          await notification.save();
-          console.log(`Annulation du rendez-vous ID: ${rdv._id} (Date: ${rdv.date})`);
-        }
-      } else {
-        console.log(`Rendez-vous encore valide ID: ${rdv._id} (Date: ${rdv.date})`);
+          if (tachesEnAttente.length === 0) { // Si AUCUNE tâche en attente, on peut annuler
+              const annulation = await annulerRendezVous(rdv._id, "annulé");
+
+              if (annulation.success) {
+                  sendEmailNotification(rdv.id_client.email, Utils.formatDate(rdv.date), "annulation");
+
+                  const notification = new Notification({
+                      titre: "Annulation de votre rendez-vous",
+                      message: `Votre rendez-vous prévu le ${Utils.formatDate(rdv.date)} a été annulé.`,
+                      id_client: rdv.id_client,
+                      id_rendez_vous: rdv._id
+                  });
+
+                  await notification.save();
+                  console.log(`✅ Annulation automatique du RDV ID: ${rdv._id}`);
+              }
+          } else {
+              console.log(`🔵 RDV ID: ${rdv._id} maintenu (Tâche en attente trouvée)`);
+          }
       }
-    }
   } catch (error) {
-    throw new Error(error);
+      console.error("❌ Erreur dans l'annulation automatique :", error);
   }
 }
 

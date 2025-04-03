@@ -22,7 +22,7 @@ router.get('/test_client', authMiddleware, (req, res) => {
 
 
 
-router.delete('/rendez-vous/annulation/:rendezVousId',authMiddleware, rendezVousControllers.annulerRendezVous)
+
 
 router.post('/devis/demande',authMiddleware,devisControllers.demandeDevis) 
 
@@ -43,7 +43,10 @@ router.get('/facture/generer/:id',authMiddleware,factureControllers.genererFactu
 router.get('/factures/:idClient',authMiddleware,factureControllers.getAllFactureByIdClient)
 
 
+// integrer le 02/04/25
+router.delete('/rendez-vous/annulation/:rendezVousId',authMiddleware, rendezVousControllers.annulerRendezVous)
 
+router.get('/taches/tous/:rendezVousId',authMiddleware,tacheControllers.getEtatTacheRendezVous)
 
 // intégrée le 01/04/25
 router.post('/rendez-vous/validation',authMiddleware,rendezVousControllers.validerRendezVous)

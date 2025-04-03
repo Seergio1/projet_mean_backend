@@ -51,12 +51,19 @@ exports.getAllRendezVousClient = async (req,res) => {
 exports.annulerRendezVous = async (req, res) => {
     try {
         const { rendezVousId } = req.params; 
+        const {etat} = req.body;
         if (!rendezVousId ) {
             return res.status(400).json({ message: "L'id du rendez vous est requis" });
         }
-        const result = await annulerRendezVous(rendezVousId);
+        const result = await annulerRendezVous(rendezVousId,etat);
 
-        res.status(200).json(result); 
+        if (result && result.message) {
+            // Retourner le message et définir le statut HTTP en fonction de success
+            return res.status(result.success ? 200 : 400).json({ message: result.message });
+          } else {
+            // En cas de réponse invalide de la fonction annulerRendezVous
+            return res.status(500).json({ message: "Réponse invalide de la fonction d'annulation." });
+          }
     } catch (error) {
         console.error("Erreur lors de l'annulation du rendez-vous:", error);
         res.status(500).json({ message: "Erreur lors de l'annulation du rendez-vous." });

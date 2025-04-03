@@ -16,6 +16,7 @@ const { getDateSansDecalageHoraire } = require('./services/Utils');
 const Vehicule = require('./models/Vehicule')
 const Utils = require('./services/Utils');
 const { refuserRendezVousAuto } = require('./services/RendezVousService');
+const Tache = require('./models/Tache');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -40,33 +41,39 @@ app.use('/api/manager', managerRoutes);
 
 // Planification de l'envoi de la notification 24 heures avant le rendez-vous
 
-cron.schedule('0 0 * * *', async () => { // chaque minuit
+cron.schedule('30 2 * * *', async () => { // chaque minuit
     
     try {
         await refuserRendezVousAuto();
         const now = getDateSansDecalageHoraire(new Date());
-
+        
         // Récupérer tous les rendez-vous dont la date est dans 24 heures
         const rendezVous = await RendezVous.find({
-            date: { $gte: now, $lte: new Date(now.getTime() + 24 * 60 * 60 * 1000) },  // 24 heures à partir de maintenant
+            date: { $gte: now, $lte: getDateSansDecalageHoraire(new Date(now.getTime() + 24 * 60 * 60 * 1000) )},  // 24 heures à partir de maintenant
             etat: 'accepté'
         }).populate('id_client');  // Récupérer les informations du client
-        console.log(rendezVous);
         
         for (const rdv of rendezVous) {
             const client = rdv.id_client;
+            const tacheInvalide = await Tache.find({
+                id_rendez_vous:rdv._id,
+                etat: ["en attente"]
+            })
+            
+            if (tacheInvalide.length > 0) {
+                // Envoyer l'email de notification
+                // sendEmailNotification("giorakotomalala@gmail.com", rdv.date);
+                sendEmailNotification(rdv.id_client.email,Utils.formatDate(rdv.date),"rappel");
 
-            // Envoyer l'email de notification
-            // sendEmailNotification("giorakotomalala@gmail.com", rdv.date);
-            sendEmailNotification(rdv.id_client.email,Utils.formatDate(rdv.date),"rappel");
+                const notification = new Notification({
+                    titre: "Rappel de votre rendez-vous",
+                    message: `Vous avez un rendez vous le ${Utils.formatDate(rdv.date)}`,
+                    id_client: client._id,
+                    id_rendez_vous: rdv._id
+                });
+                await notification.save();
+            }
 
-            const notification = new Notification({
-                titre: "Rappel de votre rendez-vous",
-                message: `Vous avez un rendez vous le ${Utils.formatDate(rdv.date)}`,
-                id_client: client._id,
-                id_rendez_vous: rdv._id
-            });
-            await notification.save();
         }
     } catch (error) {
         console.error("Erreur lors de la planification des notifications :", error);

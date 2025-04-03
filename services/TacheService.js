@@ -1,7 +1,7 @@
 const RendezVous = require("../models/RendezVous");
 const Tache = require("../models/Tache");
 const { getDateSansDecalageHoraire, getDateFin_ } = require("./Utils");
-
+const mongoose = require("mongoose");
 function getDateFin(rendezVous){
     const allServices = rendezVous.services;
     let total = 0.0;
@@ -29,10 +29,27 @@ async function getTacheDateIndisponible() {
             dateDebut: tache.date_debut,  
             dateFin: tache.date_fin       
         }));
-        if(datesIndisponibles.length == 0) throw new Error("Aucune date indisponible trouvée");
+        // if(datesIndisponibles.length == 0) throw new Error("Aucune date indisponible trouvée");
         return datesIndisponibles;
     } catch (error) {
         throw new Error(error)
+    }
+}
+
+async function getEtatTacheRendezVous(rendezVousId) {
+    try {
+        const rendezVousObjectId = new mongoose.Types.ObjectId(rendezVousId);
+        const tache = await Tache.findOne({
+            id_rendez_vous:rendezVousObjectId
+        });
+
+        if (!tache) return null; // Aucune tâche trouvée
+        console.log(tache);
+        
+        return tache; // Retourne l'état de la tâche
+    } catch (error) {
+        console.error("Erreur lors de la récupération de l'état de la tâche :", error);
+        return null;
     }
 }
 
@@ -74,4 +91,4 @@ async function updateEtatTache(id_tache,newEtat,libelle = "Déscription tâche")
 
 
 
-module.exports = {getDateFin,updateEtatTache,getAllTacheMecanicien,getTacheDateIndisponible};
+module.exports = {getDateFin,updateEtatTache,getAllTacheMecanicien,getTacheDateIndisponible,getEtatTacheRendezVous};

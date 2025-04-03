@@ -1,26 +1,24 @@
 [{
   "_id": {
-    "$oid": "67eb1cfe7146e57b5267cffb"
+    "$oid": "67edebd0ab10722bc38f6e52"
   },
-  "id_mecanicien": "67d1ba0cbd69d67516934f7a",
-  "id_vehicule": "67d30e0b8a5297b7577f535f",
-  "id_rendez_vous": "67e08055c9791e0d16eb30b5",
-  "libelle": "Travail à réaliser sur le véhicule",
-  "prix": 20000,
+  "id_mecanicien": {
+    "$oid": "67d1ba0cbd69d67516934f7a"
+  },
+  "id_vehicule": {
+    "$oid": "67d30e0b8a5297b7577f535f"
+  },
+  "id_rendez_vous": {
+    "$oid": "67edebd0ab10722bc38f6e50"
+  },
+  "libelle": "Déscription tâche",
+  "prix": 152500,
   "etat": "en attente",
-  "date_debut": "2025-04-02T13:00:00.000+00:00",
-  "date_fin": "2025-04-02T14:00:00.000+00:00"
-},
-{
-  "_id": {
-    "$oid": "67eb1da07146e57b5267d000"
+  "date_debut": {
+    "$date": "2025-04-04T09:00:00.000Z"
   },
-  "id_mecanicien": "67d1ba0cbd69d67516934f7a",
-  "id_vehicule": "67d30e0b8a5297b7577f535f",
-  "id_rendez_vous": "67d314764881e11ac40c694c",
-  "libelle": "Travail à réaliser sur le véhicule",
-  "prix": 20000,
-  "etat": "terminé",
-  "date_debut": "2025-03-15T08:00:00.000+00:00",
-  "date_fin": "2025-03-15T09:00:00.000+00:00"
+  "date_fin": {
+    "$date": "2025-04-04T10:00:00.000Z"
+  },
+  "__v": 0
 }]

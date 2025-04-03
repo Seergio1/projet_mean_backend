@@ -1,33 +1,6 @@
 [{
   "_id": {
-    "$oid": "67d314764881e11ac40c694c"
-  },
-  "id_client": {
-    "$oid": "67d1c492360396ed94c59534"
-  },
-  "date": {
-    "$date": "2025-03-15T08:00:00.000Z"
-  },
-  "etat": "accepté",
-  "services": [
-    {
-      "$oid": "67d30ee48a5297b7577f5367"
-    }
-  ],
-  "date_demande": {
-    "$date": "2025-03-13T17:23:02.000Z"
-  },
-  "__v": 0,
-  "id_mecanicien": {
-    "$oid": "67d1ba0cbd69d67516934f7a"
-  },
-  "id_vehicule": {
-    "$oid": "67d30e0b8a5297b7577f535f"
-  }
-},
-{
-  "_id": {
-    "$oid": "67e08055c9791e0d16eb30b5"
+    "$oid": "67edebd0ab10722bc38f6e50"
   },
   "id_client": {
     "$oid": "67d1c492360396ed94c59534"
@@ -36,19 +9,19 @@
     "$oid": "67d30e0b8a5297b7577f535f"
   },
   "date": {
-    "$date": "2025-04-02T13:00:00.000Z"
+    "$date": "2025-04-04T09:00:00.000Z"
   },
   "etat": "accepté",
-  "id_mecanicien": {
-    "$oid": "67d1ba0cbd69d67516934f7a"
-  },
   "services": [
     {
-      "$oid": "67d30ee48a5297b7577f5367"
+      "$oid": "67edadd2b35e9ab1dece8ce9"
+    },
+    {
+      "$oid": "67edb288b35e9ab1dece8cea"
     }
   ],
   "date_demande": {
-    "$date": "2025-03-24T00:42:45.682Z"
+    "$date": "2025-04-03T05:00:48.688Z"
   },
   "__v": 0
 }]
