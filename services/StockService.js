@@ -184,8 +184,6 @@ const getTotalDepenseArtice = async () => {
     }
 }
 
-const 
-
 
 
 module.exports = {getTotalDepenseArtice, getAllMouvementStock, insertMouvementStock, getStockArticle, getStockAvecDetails, getStockAvecDetailsByArticle};                        
