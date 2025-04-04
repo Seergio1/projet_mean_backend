@@ -10,6 +10,18 @@ const getAllServicesById = async (ids_services) => {
     }
 };
 
+const getServiceById = async (id_service) => {
+    try {
+        const service = await Service.findOne({ _id: id_service });
+        return service;
+    } catch (error) {
+        console.error("Erreur lors de la récupération du service :", error);
+        throw error;
+    }
+};
+
+
+
 const getAllServices = async () => {
     try {
         const services = await Service.find();
@@ -84,4 +96,4 @@ async function getHistoriqueServiceClientVehicule(id_client, id_vehicule) {
 //     }
 // };
 
-module.exports = {getAllHistoriqueServiceClient,getHistoriqueServiceClientVehicule,getAllServicesById,getAllServices};
+module.exports = {getAllHistoriqueServiceClient,getHistoriqueServiceClientVehicule,getAllServicesById,getAllServices,getServiceById};

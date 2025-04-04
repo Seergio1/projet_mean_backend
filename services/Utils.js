@@ -6,11 +6,11 @@ const { getInfoServiceById } = require('./ArticleService');
 
  function getTotalArticle(articleInfo) {
     let prixTot = 0.0;
-        if (articleInfo) { 
-            for(const artInf of articleInfo){
-                prixTot += artInf.id_article.prix * artInf.nbr_article; // Calcul du prix total pour chaque article (prix * quantité)
-            }
+    for (const artInf of articleInfo) {
+        if (artInf.id_article && typeof artInf.id_article.prix === "number" && artInf.nbr_article) {
+          prixTot += artInf.id_article.prix * artInf.nbr_article;
         }
+      }
     return prixTot;
 }
 

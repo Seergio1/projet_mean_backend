@@ -24,9 +24,8 @@ async function getInfoServiceById(serviceId) {
 
         // console.log("InfoArt récupéré:", infoArt);  // Vérification des données récupérées
 
-        if (!Array.isArray(infoArt) || infoArt.length === 0) {
-            // throw new Error();
-            console.log("Aucune information trouvée pour ce service.");
+        if (!infoArt || infoArt.length === 0) {
+            return []; // Retourne un tableau vide au lieu d'afficher un log
         }
 
         return infoArt;
