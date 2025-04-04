@@ -23,7 +23,19 @@ router.put('/update-role/:id', authMiddleware, managerMiddleware, async (req, re
         user.role = role;
         await user.save();
 
-        res.json({ message: 'Rôle mis à jour avec succès', user });
+        res.json({ message: 'Rôle mis à jour avec succès', data: user });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+});
+
+router.get('/profil', authMiddleware, managerMiddleware, async (req, res) => {
+    try {
+        const profil = await Utilisateur.find();
+
+        res.json({ message: 'liste des utilisateurs', data: profil});
+
     } catch (error) {
         res.status(500).json({ message: 'Erreur serveur' });
     }
