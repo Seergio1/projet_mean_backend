@@ -18,17 +18,10 @@ router.get('/test_client', authMiddleware, (req, res) => {
     res.json({ message: 'Bienvenue sur la route client !' });
 });
 
+// integrer le 03/04/25
+router.post('/devis/demande',authMiddleware,devisControllers.demandeDevis) 
 
-// router.post('/rendez-vous/proposition',authMiddleware,rendezVousControllers.proposerRendezVous)
-
-
-
-
-
-
-router.post('/devis/demande',authMiddleware,devisControllers.demandeDevis) // integrer le 03/04/25
-
-router.post('/devis/historique_tous_vehicule',authMiddleware,devisControllers.getAllHistoriqueDevisClient)
+router.post('/devis/historique_tous_vehicule',authMiddleware,devisControllers.getAllHistoriqueDevisClient) 
 
 router.post('/devis/historique_vehicule',authMiddleware,devisControllers.getHistoriqueDevisClientVehicule)
 

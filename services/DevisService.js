@@ -25,7 +25,7 @@ async function demandeDevis(vehiculeId, clientId, servicesIds, artCheck) {
             // Si artCheck est activé, récupérer les informations des articles liés au service
             if (artCheck == 1) {
                 const result = await getInfoServiceById(service._id);
-                articleInfo.push(...result); // Ajouter les articles récupérés
+                if (result) articleInfo.push(...result); // Ajouter les articles récupérés
             }
         }
         
@@ -52,12 +52,7 @@ async function demandeDevis(vehiculeId, clientId, servicesIds, artCheck) {
         const resultat = await newDevis.save();
         return resultat;
 
-        // Préparation de la réponse avec les données du devis et du prix total des articles
-        // return {
-        //     // data: resultat,
-        //     // prix_tot_articles: prixTotArticle
-        // };
-        // return {}
+
     } catch (error) {
         console.error("Erreur lors de la demande de devis :", error);
         throw error;
