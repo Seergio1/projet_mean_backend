@@ -9,6 +9,8 @@ const factureControllers = require('../controllers/factureControllers')
 const notificationControllers = require('../controllers/notificationControllers')
 const vehiculeControllers = require('../controllers/vehiculeControllers')
 const tacheControllers = require('../controllers/tacheControllers')
+const articleControllers = require('../controllers/articleController')
+
 
 
 const router = express.Router();
@@ -30,7 +32,7 @@ router.post('/devis/demande',authMiddleware,devisControllers.demandeDevis) //
 
 
 
-router.post('/devis/demande',authMiddleware,devisControllers.demandeDevis) 
+router.post('/devis/demande',authMiddleware,devisControllers.demandeDevis) // integrer le 03/04/25
 
 router.post('/devis/historique_tous_vehicule',authMiddleware,devisControllers.getAllHistoriqueDevisClient)
 
@@ -48,6 +50,8 @@ router.get('/facture/generer/:id',authMiddleware,factureControllers.genererFactu
 
 router.get('/factures/:idClient',authMiddleware,factureControllers.getAllFactureByIdClient)
 
+
+router.get('/articles',authMiddleware,articleControllers.getAllArticle)
 
 // integrer le 02/04/25
 router.delete('/rendez-vous/annulation/:rendezVousId',authMiddleware, rendezVousControllers.annulerRendezVous)
@@ -72,6 +76,6 @@ router.put('/notification/etat/:id_notification',authMiddleware,notificationCont
 
 router.put('/notifications/etat/:clientId',authMiddleware,notificationControllers.updateAllEtatNotification)
 
-
+router.post('/article-service',authMiddleware, articleControllers.createArticleServiceController);
 
 module.exports = router;

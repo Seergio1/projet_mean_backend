@@ -1,14 +1,16 @@
-const Article = require('../models/Article')
+const Article = require('../models/Article');
+const { getInfoServiceById } = require('./ArticleService');
 // function getTotal(datas) {
 //     return datas.reduce((total, data) => total + data, 0);
 // }
 
-async function getTotalArticle(datas) {
-    let prixTot = 0.0; 
-    for (const data of datas) {
-        let article = await Article.findById(data.id_article); 
-        prixTot += article.prix * data.nbr_article; 
-    }
+ function getTotalArticle(articleInfo) {
+    let prixTot = 0.0;
+        if (articleInfo) { 
+            for(const artInf of articleInfo){
+                prixTot += artInf.id_article.prix * artInf.nbr_article; // Calcul du prix total pour chaque article (prix * quantité)
+            }
+        }
     return prixTot;
 }
 

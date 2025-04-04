@@ -1,21 +1,28 @@
 const { demandeDevis, getAllHistoriqueDevisClient, getHistoriqueDevisClientVehicule } = require("../services/DevisService");
 
-exports.demandeDevis = async (req,res) =>{
+exports.demandeDevis = async (req, res) => {
     try {
-        const { clientId, tabArticles, id_services, vehiculeId } = req.body;
-         // Vérification des données nécessaires
-         if (!clientId || !id_services || !vehiculeId || id_services.length === 0) {
+        // Récupération des données de la requête
+        const { clientId, servicesIds, vehiculeId, artCheck } = req.body;
+        
+        // Vérification des données nécessaires
+        if (!clientId || !servicesIds || !vehiculeId || servicesIds.length === 0 || artCheck === undefined) {
             return res.status(400).json({ message: "Tous les champs sont requis" });
         }
-        const result = await demandeDevis(vehiculeId,clientId,id_services,tabArticles);
+
+        // Appel de la fonction demandeDevis avec les données récupérées
+        const result = await demandeDevis(vehiculeId, clientId, servicesIds, artCheck);
+
+        // Réponse en cas de succès
         res.status(201).json({ message: "Demande de devis faite avec succès", data: result });
     } catch (error) {
         console.error("Erreur lors de la demande de devis:", error);
 
-        // Renvoyer une réponse d'erreur générique
-        res.status(500).json({ message: "Erreur lors de la demande de devis." });
+        // Réponse en cas d'erreur
+        res.status(500).json({ message: "Erreur lors de la demande de devis", data: [{}] });
     }
-}
+};
+
 
 exports.getAllHistoriqueDevisClient = async (req,res) =>{
     try {
@@ -30,7 +37,7 @@ exports.getAllHistoriqueDevisClient = async (req,res) =>{
         console.error("Erreur lors de la récupération de tous les historiques de devis pour ce client:", error);
 
         // Renvoyer une réponse d'erreur générique
-        res.status(500).json({ message: "Erreur lors de la récupération de tous les historiques de devis pour ce client." });
+        res.status(500).json({ message: "Erreur lors de la récupération de tous les historiques de devis pour ce client.",data: [{}] });
     }
 }
 
