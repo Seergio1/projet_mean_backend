@@ -44,3 +44,16 @@ exports.getMouvementArticle = async (req, res) => {
         res.status(500).json({ message: "get mouvement article Stock", error});
     }
 };
+
+exports.getTotalDepenseArticle = async (req, res) => {
+    try {
+        const total = await stockService.getTotalDepenseArtice();
+
+        res.status(201).json({ message: "get total depense article succes", data : total});
+
+    } catch (error) {
+        console.error("erreur get total depense article", error);
+
+        res.status(500).json({ message: "erreur get total depense article", error});
+    }
+};

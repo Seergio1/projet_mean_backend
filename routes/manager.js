@@ -33,9 +33,12 @@ router.put('/rendez-vous/valider/:rendezVousId', authMiddleware, managerMiddlewa
 
 router.get('/mouvement-stock', authMiddleware, managerMiddleware, stockControllers.getAllMouvementStock);
 
-router.put('/insert-mvmt', stockControllers.insertMouvementStock);
+router.put('/insert-mvmt', authMiddleware, managerMiddleware, stockControllers.insertMouvementStock);
 
-router.get("/article", stockControllers.getMouvementArticle);
+router.get("/article", authMiddleware, managerMiddleware, stockControllers.getMouvementArticle);
+
+router.get("/article-depense", authMiddleware, managerMiddleware, stockControllers.getTotalDepenseArticle);
+
 
  
 module.exports = router;

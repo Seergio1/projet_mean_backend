@@ -163,6 +163,29 @@ const getStockAvecDetailsByArticle = async (id_Article) => {
     }
 };
 
+const getTotalDepenseArtice = async () => {
+    try {
+        const result = await MouvementStock.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalPrixTotal: { $sum: '$prix_total'}
+                }
+            }
+        ]);
+
+        const total = result.length > 0 ? result[0].totalPrixTotal : 0;
+
+        return total;
+
+    } catch (error) {
+        console.error("Erreur lors du calcul de la somme des prix_total :", error);
+        throw error;
+    }
+}
+
+const 
 
 
-module.exports = {getAllMouvementStock, insertMouvementStock, getStockArticle, getStockAvecDetails, getStockAvecDetailsByArticle};                        
+
+module.exports = {getTotalDepenseArtice, getAllMouvementStock, insertMouvementStock, getStockArticle, getStockAvecDetails, getStockAvecDetailsByArticle};                        
