@@ -35,6 +35,7 @@ async function ajoutFacture(vehiculeId, clientId, serviceEtArticles) {
       }
 
       prixTotal += service.prix
+      
 
       if (check_article == 1) {
         const result = await getInfoServiceById(service._id);
@@ -43,7 +44,7 @@ async function ajoutFacture(vehiculeId, clientId, serviceEtArticles) {
 
       tabIdServices.push(id_service)
     }
-
+    
     // prix total des articles raha nividy tao amintsika
     let prixTotArticle = articleInfo.length > 0 ? getTotalArticle(articleInfo) : 0.0;
 
@@ -55,6 +56,7 @@ async function ajoutFacture(vehiculeId, clientId, serviceEtArticles) {
       articles: articleInfo
     });
 
+    
     const resultat = await newFacture.save();
     return resultat;
 

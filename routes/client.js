@@ -25,8 +25,6 @@ router.post('/devis/historique_tous_vehicule',authMiddleware,devisControllers.ge
 
 router.post('/devis/historique_vehicule',authMiddleware,devisControllers.getHistoriqueDevisClientVehicule)
 
-
-
 router.post('/service/historique_tous_vehicule',authMiddleware,serviceControllers.getAllHistoriqueServiceClient)
 
 router.post('/service/historique_vehicule',authMiddleware,serviceControllers.getHistoriqueServiceClientVehicule)
@@ -36,7 +34,6 @@ router.post('/facture/demande',authMiddleware,factureControllers.ajoutFacture)
 router.get('/facture/generer/:id',authMiddleware,factureControllers.genererFacture)
 
 router.get('/factures/:idClient',authMiddleware,factureControllers.getAllFactureByIdClient)
-
 
 router.get('/articles',authMiddleware,articleControllers.getAllArticle)
 
