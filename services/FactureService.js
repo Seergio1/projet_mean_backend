@@ -7,6 +7,9 @@ const path = require("path");
 const fs = require("fs");
 const ejs = require("ejs");
 
+
+
+
 /*
   serviceId + checkArticle = serviceEtArticle
   serviceEtArticle = [{}]
@@ -81,7 +84,10 @@ async function getAllFactureByIdclient(clientId) {
   }
 }
 
+
 async function creerFacturePDF(factureId) {
+  const logoPath = path.join(__dirname, '../templates','logo.png');
+  const logoBase64 = fs.readFileSync(logoPath, 'base64');
   try {
     const facture = await Facture.findById(factureId)
       .populate("id_client")
@@ -92,12 +98,13 @@ async function creerFacturePDF(factureId) {
     if (!facture) throw new Error("Facture non trouvée");
 
     const html = await ejs.renderFile(
-      path.join(__dirname, "../templates/facture.ejs"),
+      path.join(__dirname, "../templates", "facture.ejs"),
       {
         facture,
         totalService: getTotalServices(facture.services),
         totalArticles: getTotalArticles(facture.articles),
-        totalGlobal: facture.prix_total
+        totalGlobal: facture.prix_total,
+        logoBase64
       }
     );
 
@@ -116,7 +123,12 @@ async function creerFacturePDF(factureId) {
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
-    await page.pdf({ path: outputPath, format: "A4", printBackground: true });
+    await page.pdf({ path: outputPath, format: "A4", printBackground: true, margin: {
+      // top: '10mm',
+      // bottom: '10mm',
+      // left: '10mm',
+      // right: '10mm'
+    } });
 
     await browser.close();
 
