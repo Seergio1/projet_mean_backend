@@ -58,7 +58,8 @@ async function getAllTacheMecanicien(mecanicienId){
     try {
         const taches = await Tache.find({
             id_mecanicien : mecanicienId
-        }).populate("id_rendez_vous");
+        }).populate("id_rendez_vous")
+        .populate("id_vehicule");
         if(taches.length == 0) throw new Error("Aucune tâche trouvée");
         return taches;
     } catch (error) {

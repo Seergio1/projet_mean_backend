@@ -19,7 +19,7 @@ exports.updateEtatTache = async (req,res) =>{
 
 exports.getAllTacheMecanicien = async (req,res) =>{
     try {
-        const mecanicienId = req.params.tacheId;
+        const mecanicienId = req.params.mecanicienId;
         if (!mecanicienId) {
             return res.status(400).json({ message: "L'Id du mécanicien doit être fournise" });
         }
