@@ -3,6 +3,8 @@ const Utilisateur = require('../models/Utilisateur');
 const authMiddleware = require('../middlewares/auth');
 const {managerMiddleware} = require('../middlewares/role');
 
+const modeleControllers = require('../controllers/modeleController')
+
 const router = express.Router();
 
 // Modifier le rôle d'un utilisateur (seulement accessible aux admins)
@@ -26,6 +28,12 @@ router.put('/update-role/:id', authMiddleware, managerMiddleware, async (req, re
         res.status(500).json({ message: 'Erreur serveur' });
     }
 });
+
+router.post('/modele/ajout',authMiddleware,modeleControllers.createModele)
+
+router.put('/modele/update/:id',authMiddleware,modeleControllers.updateModeleById)
+
+router.delete('/modele/delete/:id',authMiddleware,modeleControllers.removeModele)
 
  
 module.exports = router;

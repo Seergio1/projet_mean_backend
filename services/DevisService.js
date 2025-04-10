@@ -64,7 +64,10 @@ async function demandeDevis(vehiculeId, clientId, servicesIds, artCheck) {
 async function getAllHistoriqueDevisClient(id_client) {
     try {
         const devis = await Devis.find({ id_client })
-            .populate("id_vehicule") 
+            .populate({
+                path: "id_vehicule", 
+                populate: { path: "id_modele", select: "nom" }
+            })
             .populate("services") 
             .populate("articles.id_article")
             .sort({ date_demande: -1 });
@@ -79,7 +82,10 @@ async function getAllHistoriqueDevisClient(id_client) {
 async function getHistoriqueDevisClientVehicule(id_client, id_vehicule) {
     try {
         const devis = await Devis.find({ id_client, id_vehicule })
-            .populate("id_vehicule")
+            .populate({
+                path: "id_vehicule", 
+                populate: { path: "id_modele", select: "nom" }
+            })
             .populate("services")
             .populate("articles.id_article")
             .sort({ date_demande: -1 });

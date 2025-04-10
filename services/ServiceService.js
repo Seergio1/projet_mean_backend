@@ -36,7 +36,10 @@ const getAllServices = async () => {
 async function getAllHistoriqueServiceClient(id_client) {
     try {
         const devis = await Facture.find({ id_client })
-            .populate("id_vehicule") 
+            .populate({
+                path: "id_vehicule",
+                populate: { path: "id_modele", select: "nom" }
+            })
             .populate("services") 
             .populate("articles.id_article")
             .sort({ date: -1 });
