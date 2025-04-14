@@ -74,7 +74,10 @@ async function getAllFactureByIdclient(clientId) {
   try {
     const factures = await Facture.find({ id_client: clientId })
     .populate("id_client")
-    .populate("id_vehicule")
+    .populate({
+      path: "id_vehicule",
+      populate: { path: "id_modele", select: "nom" }
+    })
     .populate("services")
     .populate("articles.id_article");
     return factures;
@@ -91,7 +94,10 @@ async function creerFacturePDF(factureId) {
   try {
     const facture = await Facture.findById(factureId)
       .populate("id_client")
-      .populate("id_vehicule")
+      .populate({
+          path: "id_vehicule",
+          populate: { path: "id_modele", select: "nom" }
+      })
       .populate("services")
       .populate("articles.id_article");
 

@@ -10,6 +10,7 @@ const notificationControllers = require('../controllers/notificationControllers'
 const vehiculeControllers = require('../controllers/vehiculeControllers')
 const tacheControllers = require('../controllers/tacheControllers')
 const articleControllers = require('../controllers/articleController')
+const modeleControllers = require('../controllers/modeleController')
 
 
 
@@ -51,6 +52,10 @@ router.get('/facture/generer/:id',authMiddleware,factureControllers.genererFactu
 router.get('/factures/:idClient',authMiddleware,factureControllers.getAllFactureByIdClient)
 
 router.get('/articles',authMiddleware,articleControllers.getAllArticle)
+
+router.post('/vehicule/ajout_utilisateur',authMiddleware,vehiculeControllers.addVehiculeToUtilisateur)
+
+router.get('/modele/tous',authMiddleware,modeleControllers.getModeles)
 
 // integrer le 02/04/25
 router.delete('/rendez-vous/annulation/:rendezVousId',authMiddleware, rendezVousControllers.annulerRendezVous)

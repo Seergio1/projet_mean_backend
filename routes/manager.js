@@ -5,6 +5,8 @@ const {managerMiddleware} = require('../middlewares/role');
 const rendezVousControllers = require('../controllers/rendezVousControllers')
 const stockControllers = require('../controllers/stockControllers');
 
+const modeleControllers = require('../controllers/modeleController')
+
 const router = express.Router();
 
 // Modifier le rôle d'un utilisateur (seulement accessible aux admins)
@@ -51,6 +53,11 @@ router.get("/article", authMiddleware, managerMiddleware, stockControllers.getMo
 
 router.get("/article-depense", authMiddleware, managerMiddleware, stockControllers.getTotalDepenseArticle);
 
+router.post('/modele/ajout',authMiddleware,modeleControllers.createModele)
+
+router.put('/modele/update/:id',authMiddleware,modeleControllers.updateModeleById)
+
+router.delete('/modele/delete/:id',authMiddleware,modeleControllers.removeModele)
 
  
 module.exports = router;

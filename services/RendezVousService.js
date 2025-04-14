@@ -151,6 +151,9 @@ async function getAllRendezVousClient(clientId){
     if (!rendezVous) {
       throw new Error("Aucun rendez vous trouvé")
     }
+    for (let rendezVousItem of rendezVous) {
+      await rendezVousItem.populate("id_vehicule.id_modele", "nom"); // Peupler uniquement le champ `nom` du modèle du véhicule
+    }
     return rendezVous;
   } catch (error) {
     console.log(`Erreur lors de la recupération des rendez du client ${clientId}`,error.message);
