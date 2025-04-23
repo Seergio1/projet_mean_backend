@@ -29,10 +29,13 @@
   "contact": "789456123",
   "password": "$2b$10$t1lpYPEzov3OOldQgmF/aul51QrdnpKbWV2pLIqZ7yXRYQN7STQRu",
   "role": "client",
-  "__v": 0,
+  "__v": 1,
   "vehicules": [
     {
       "$oid": "67d30e0b8a5297b7577f535f"
+    },
+    {
+      "$oid": "67f7ca58767992cd6eac237b"
     }
   ]
 }]

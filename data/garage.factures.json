@@ -1,0 +1,35 @@
+[{
+  "_id": {
+    "$oid": "67efd6eacae1a77ba4f61058"
+  },
+  "id_client": {
+    "$oid": "67d1c492360396ed94c59534"
+  },
+  "id_vehicule": {
+    "$oid": "67d30e0b8a5297b7577f535f"
+  },
+  "prix_total": 180000,
+  "services": [
+    {
+      "$oid": "67d30ee48a5297b7577f5367"
+    },
+    {
+      "$oid": "67edb288b35e9ab1dece8cea"
+    }
+  ],
+  "articles": [
+    {
+      "id_article": {
+        "$oid": "67da7651809ffc658708af26"
+      },
+      "nbr_article": 2,
+      "_id": {
+        "$oid": "67ee8d42cbb2320e2bb1ecdd"
+      }
+    }
+  ],
+  "date": {
+    "$date": "2025-04-04T15:56:10.873Z"
+  },
+  "__v": 0
+}]
