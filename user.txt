@@ -2,11 +2,13 @@
   "email": "johndoe@example.com",
   "password": "monmotdepassehaché"
 }
+
 {
   "email": "sergio@example.com",
   "password": "Sergio1811"
 }
+
 {
-  "email": "client1@example.com",
+  "email": "giorakotomalala@gmail.com",
   "password": "Client1"
 }

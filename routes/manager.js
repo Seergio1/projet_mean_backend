@@ -2,6 +2,10 @@ const express = require('express');
 const Utilisateur = require('../models/Utilisateur');
 const authMiddleware = require('../middlewares/auth');
 const {managerMiddleware} = require('../middlewares/role');
+const rendezVousControllers = require('../controllers/rendezVousControllers')
+const stockControllers = require('../controllers/stockControllers');
+
+const modeleControllers = require('../controllers/modeleController')
 
 const router = express.Router();
 
@@ -21,11 +25,40 @@ router.put('/update-role/:id', authMiddleware, managerMiddleware, async (req, re
         user.role = role;
         await user.save();
 
-        res.json({ message: 'Rôle mis à jour avec succès', user });
+        res.json({ message: 'Rôle mis à jour avec succès', data: user });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+});
+
+router.get('/profil', authMiddleware, managerMiddleware, async (req, res) => {
+    try {
+        const profil = await Utilisateur.find();
+
+        res.json({ message: 'liste des utilisateurs', data: profil});
+
     } catch (error) {
         res.status(500).json({ message: 'Erreur serveur' });
     }
 });
 
+router.put('/rendez-vous/valider/:rendezVousId', authMiddleware, managerMiddleware, rendezVousControllers.validerRendezVous);
+
+router.get('/mouvement-stock', authMiddleware, managerMiddleware, stockControllers.getAllMouvementStock);
+
+router.put('/insert-mvmt', authMiddleware, managerMiddleware, stockControllers.insertMouvementStock);
+
+router.get("/article", authMiddleware, managerMiddleware, stockControllers.getMouvementArticle);
+
+router.get("/article-depense", authMiddleware, managerMiddleware, stockControllers.getTotalDepenseArticle);
+
+router.post('/modele/ajout',authMiddleware,modeleControllers.createModele)
+
+router.put('/modele/update/:id',authMiddleware,modeleControllers.updateModeleById)
+
+router.delete('/modele/delete/:id',authMiddleware,modeleControllers.removeModele)
+
+ 
 module.exports = router;
 

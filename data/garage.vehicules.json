@@ -1,0 +1,21 @@
+[{
+  "_id": {
+    "$oid": "67d30e0b8a5297b7577f535f"
+  },
+  "numero": "ABC-123",
+  "id_modele": {
+    "$oid": "67f7a72014641d42444ff23c"
+  },
+  "marque": "Corolla"
+},
+{
+  "_id": {
+    "$oid": "67f7ca58767992cd6eac237b"
+  },
+  "id_modele": {
+    "$oid": "67f7a8fbf0773c126477c1b7"
+  },
+  "numero": "45TBA",
+  "marque": "208",
+  "__v": 0
+}]

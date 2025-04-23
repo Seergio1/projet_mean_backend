@@ -2,11 +2,12 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const UtilisateurSchema = new mongoose.Schema({
-    nom: { type: String, required: true, unique: true },
+    nom: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     contact: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['client', 'mecanicien', 'manager'], default: 'client' }
+    role: { type: String, enum: ['client', 'mecanicien', 'manager'], default: 'client' },
+    vehicules: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Vehicule' }] 
 });
 
 // Hachage du mot de passe avant sauvegarde
@@ -16,5 +17,5 @@ UtilisateurSchema.pre('save', async function (next) {
     next();
 });
 
-module.exports = mongoose.model('User', UtilisateurSchema);
+module.exports = mongoose.model('Utilisateur', UtilisateurSchema);
 

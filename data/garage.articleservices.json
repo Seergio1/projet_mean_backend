@@ -1,0 +1,13 @@
+[{
+  "_id": {
+    "$oid": "67ee8d42cbb2320e2bb1ecdd"
+  },
+  "id_article": {
+    "$oid": "67da7651809ffc658708af26"
+  },
+  "services": {
+    "$oid": "67d30ee48a5297b7577f5367"
+  },
+  "nbr_article": 2,
+  "__v": 0
+}]
