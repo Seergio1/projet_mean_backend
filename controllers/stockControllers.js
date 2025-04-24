@@ -15,9 +15,9 @@ exports.getAllMouvementStock = async (req, res) => {
 
 exports.insertMouvementStock = async (req, res) => {
     try {
-        const {type, nombre, date, id_Article} = req.body;
+        const {type, nombre, id_Article} = req.body;
 
-        const save = await stockService.insertMouvementStock(type, nombre, date, id_Article);
+        const save = await stockService.insertMouvementStock(type, nombre, id_Article);
 
         res.status(201).json({ message: "insertion mouvement stock succes", data : save});
 

@@ -145,7 +145,10 @@ async function validerRendezVous(
 async function getAllRendezVousClient(clientId){
   try {
     const rendezVous = await RendezVous.find({id_client:clientId})
-    .populate("id_vehicule")
+    .populate({
+      path: "id_vehicule",
+      populate: { path: "id_modele", select: "nom" }
+    })
     .populate("id_mecanicien")
     .populate("services")
     if (!rendezVous) {
@@ -157,6 +160,26 @@ async function getAllRendezVousClient(clientId){
     return rendezVous;
   } catch (error) {
     console.log(`Erreur lors de la recupération des rendez du client ${clientId}`,error.message);
+    throw new Error(error)
+  }
+}
+
+async function getRendezVousById(id){
+  try {
+    const rendezVous = await RendezVous.findById(id)
+    .populate("id_client")
+    .populate({
+      path: "id_vehicule",
+      populate: { path: "id_modele", select: "nom" }
+    })
+    .populate("id_mecanicien")
+    .populate("services")
+    if (!rendezVous) {  
+      throw new Error("Aucun rendez vous rencontré")
+    }
+    return rendezVous;
+  } catch (error) {
+    console.log(`Erreur lors de la recupération du rendez du client ${id}`,error.message);
     throw new Error(error)
   }
 }
@@ -261,5 +284,6 @@ module.exports = {
   getRendezVousProche,
   annulerRendezVous,
   refuserRendezVousAuto,
-  getAllRendezVousClient
+  getAllRendezVousClient,
+  getRendezVousById
 };

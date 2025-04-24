@@ -14,7 +14,7 @@ async function getAllMouvementStock() {
     }
 }
 
-async function insertMouvementStock(type, nombre, date, id_Article) {
+async function insertMouvementStock(type, nombre, id_Article) {
     let prix_total = 0;
     let prix = 0;
     try {
@@ -32,7 +32,6 @@ async function insertMouvementStock(type, nombre, date, id_Article) {
             console.log("insertion entrer de stock");
             newMouvementStock = new MouvementStock({
                 id_Article : art._id, 
-                date : date || undefined, 
                 entrer : nombre, 
                 sortie : undefined, 
                 prix : prix, 
@@ -50,7 +49,6 @@ async function insertMouvementStock(type, nombre, date, id_Article) {
 
             newMouvementStock = new MouvementStock({
                 id_Article : art._id, 
-                date : date || undefined, 
                 entrer : undefined, 
                 sortie : nombre, 
                 prix : prix, 

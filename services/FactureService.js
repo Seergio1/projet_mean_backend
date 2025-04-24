@@ -6,6 +6,7 @@ const puppeteer = require("puppeteer");
 const path = require("path");
 const fs = require("fs");
 const ejs = require("ejs");
+const { insertMouvementStock } = require("./StockService");
 
 
 
@@ -28,7 +29,7 @@ async function ajoutFacture(vehiculeId, clientId, serviceEtArticles) {
       let id_service = serviceEtArticle.serviceId
       let check_article = serviceEtArticle.checkArticle
       
-    
+      
       const service = await getServiceById(id_service);
 
       if (!service) throw new Error(`Service introuvable pour ID : ${id_service}`);
@@ -50,6 +51,16 @@ async function ajoutFacture(vehiculeId, clientId, serviceEtArticles) {
     
     // prix total des articles raha nividy tao amintsika
     let prixTotArticle = articleInfo.length > 0 ? getTotalArticle(articleInfo) : 0.0;
+
+    if (articleInfo.length > 0) {
+      for (const artInf of articleInfo) {
+        if (artInf.nbr_article > 0) {
+          insertMouvementStock(-1, artInf.nbr_article, artInf.id_article);
+        }
+      }
+    }
+    
+    
 
     const newFacture = new Facture({
       id_client: clientId,
