@@ -58,7 +58,8 @@ async function getAllTacheMecanicien(mecanicienId){
     try {
         const taches = await Tache.find({
             id_mecanicien : mecanicienId
-        }).populate("id_rendez_vous")
+        })
+        .populate("id_rendez_vous")
         .populate({
             path: "id_vehicule",
             populate: { path: "id_modele", select: "nom" }
@@ -72,6 +73,8 @@ async function getAllTacheMecanicien(mecanicienId){
 
 async function updateEtatTache(id_tache,newEtat,libelle = "Déscription tâche") {
     try {
+        console.log(newEtat,id_tache);
+        
         const tache = await Tache.findById(id_tache);
         if (!tache) throw new Error("Tâche introuvable");
         const rdv = await RendezVous.findById(tache.id_rendez_vous).populate("services");

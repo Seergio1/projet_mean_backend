@@ -179,7 +179,7 @@ async function getRendezVousById(id){
     }
     return rendezVous;
   } catch (error) {
-    console.log(`Erreur lors de la recupération du rendez du client ${id}`,error.message);
+    console.log(`Erreur lors de la recupération du rendez vous du client ${id}`,error.message);
     throw new Error(error)
   }
 }
