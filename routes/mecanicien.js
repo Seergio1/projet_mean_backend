@@ -2,7 +2,8 @@ const express = require('express');
 const authMiddleware = require('../middlewares/auth');
 const {mecanicienMiddleware} = require('../middlewares/role')
 const tacheControllers = require('../controllers/tacheControllers')
-const rendezVousControllers = require('../controllers/rendezVousControllers')   
+const rendezVousControllers = require('../controllers/rendezVousControllers') 
+const factureControllers = require('../controllers/factureControllers')
 
 
 const router = express.Router();
@@ -17,7 +18,13 @@ router.get('/taches/:mecanicienId', authMiddleware, mecanicienMiddleware, tacheC
 
 router.get('/rendez-vous/:rendezVousId', authMiddleware, mecanicienMiddleware, rendezVousControllers.getRendezVousById);
 
+router.post('/facture/demande',authMiddleware,factureControllers.ajoutFacture)
 
+router.get('/facture/pdf/:id',authMiddleware,factureControllers.genererFacture)
+
+router.put('/facture/mise_a_jour/:factureId',authMiddleware,factureControllers.miseAJourFacture)
+
+router.get('/factures/:idClient',authMiddleware,factureControllers.getAllFactureByIdClient)
 
 
 module.exports = router;

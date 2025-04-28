@@ -1,5 +1,5 @@
 const path = require("path");
-const { ajoutFacture, creerFacturePDF, getAllFactureByIdclient } = require("../services/FactureService");
+const { ajoutFacture, creerFacturePDF, getAllFactureByIdclient,miseAJourFacture, getIdLastFacture } = require("../services/FactureService");
 const fs = require("fs");
 
 exports.ajoutFacture = async (req, res) => {
@@ -19,6 +19,36 @@ exports.ajoutFacture = async (req, res) => {
     res.status(500).json({ message: "Erreur lors de la création de facture: " + error.message });
   }
 };
+
+exports.miseAJourFacture = async (req, res) => {
+  try {
+    const factureId = req.params.factureId;
+    const { serviceEtArticles } = req.body;
+
+    if (!factureId) {
+      return res.status(400).json({ message: "factureId est requis" });
+    }
+    if (!Array.isArray(serviceEtArticles) || serviceEtArticles.length === 0) {
+      return res.status(400).json({ message: "serviceEtArticles est vide" });
+    }
+
+    const result = await miseAJourFacture(factureId, serviceEtArticles);
+    res.status(200).json({ message: "La facture a été mis à jour avec succès", data: result });
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de la facture:", error.message);
+    res.status(500).json({ message: "Erreur lors de la mise à jour de la facture: " + error.message });
+  } 
+}
+
+exports.getIdLastFacture = async (req, res) => {
+  try {
+    const result = await getIdLastFacture();
+    res.status(200).json({ message: "L'id de la derniere facture a été récupérée avec succès", data: result });
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'id de la derniere facture:", error.message);
+    res.status(500).json({ message: "Erreur lors de la récupération de l'id de la derniere facture: " + error.message });
+  }
+}
 
 
 exports.getAllFactureByIdClient = async (req, res) => {

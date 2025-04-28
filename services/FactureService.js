@@ -80,6 +80,60 @@ async function ajoutFacture(vehiculeId, clientId, serviceEtArticles) {
   }
 }
 
+async function miseAJourFacture(factureId, serviceEtArticles) {
+  try {
+    const facture = await Facture.findById(factureId);
+
+    if (!facture) {
+      throw new Error(`Facture ${factureId} est introuvable`);
+    }
+
+    const prixTotal = serviceEtArticles.reduce((acc, serviceEtArticle) => {
+      const service = getServiceById(serviceEtArticle.serviceId);
+      if (!service) {
+        throw new Error(`Service introuvable pour ID : ${serviceEtArticle.serviceId}`);
+      }
+      return acc + service.prix;
+    }, facture.prix_total);
+
+    const articleInfo = serviceEtArticles.reduce((acc, serviceEtArticle) => {
+      if (serviceEtArticle.checkArticle === 1) {
+        const result = getInfoServiceById(serviceEtArticle.serviceId);
+        return acc.concat(result);
+      }
+      return acc;
+    }, facture.articles);
+
+    const tabIdServices = serviceEtArticles.map((serviceEtArticle) => serviceEtArticle.serviceId);
+
+    const prixTotArticle = articleInfo.length > 0 ? getTotalArticle(articleInfo) : 0.0;
+    const nouveauPrixTotal = prixTotal + prixTotArticle;
+
+    await Facture.findByIdAndUpdate(facture._id, {
+      prix_total: nouveauPrixTotal,
+      articles: articleInfo,
+      services: tabIdServices,
+    });
+
+    return facture;
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour des factures :", error);
+    throw error;
+  }
+}
+
+async function getIdLastFacture() {
+  try {
+    const lastFacture = await Facture.findOne().sort({ date: -1 });
+    if (!lastFacture) {
+      throw new Error("Aucune facture trouvée");
+    }
+    return lastFacture._id;
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'id de la dernière facture :", error);
+    throw error;
+  }
+}
 
 async function getAllFactureByIdclient(clientId) {
   try {
@@ -97,7 +151,6 @@ async function getAllFactureByIdclient(clientId) {
     throw error;
   }
 }
-
 
 async function creerFacturePDF(factureId) {
   const logoPath = path.join(__dirname, '../templates','logo.png');
@@ -156,7 +209,6 @@ async function creerFacturePDF(factureId) {
   }
 }
 
-
 // Fonctions auxiliaires
 function getTotalServices(services) {
   return services.reduce((sum, s) => sum + (s.prix || 0), 0);
@@ -166,4 +218,4 @@ function getTotalArticles(articles) {
   return articles.reduce((sum, a) => sum + (a.id_article.prix * a.nbr_article), 0);
 }
 
-module.exports = { ajoutFacture, creerFacturePDF, getAllFactureByIdclient };
+module.exports = { ajoutFacture, miseAJourFacture, getIdLastFacture ,creerFacturePDF, getAllFactureByIdclient };

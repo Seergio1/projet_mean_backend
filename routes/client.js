@@ -5,7 +5,6 @@ const rendezVousControllers = require('../controllers/rendezVousControllers');
 const commentaireControllers = require('../controllers/commentaireControllers');
 const devisControllers = require('../controllers/DevisControllers')
 const serviceControllers = require('../controllers/serviceControllers')
-const factureControllers = require('../controllers/factureControllers')
 const notificationControllers = require('../controllers/notificationControllers')
 const vehiculeControllers = require('../controllers/vehiculeControllers')
 const tacheControllers = require('../controllers/tacheControllers')
@@ -20,22 +19,11 @@ router.get('/test_client', authMiddleware, (req, res) => {
     res.json({ message: 'Bienvenue sur la route client !' });
 });
 
-// integrer le 03/04/25
 router.post('/devis/demande',authMiddleware,devisControllers.demandeDevis) 
 
 router.put('/commentaire', commentaireControllers.insertCommentaire);
 
 router.get('/commentaires', commentaireControllers.findAllCommentaire);
-router.post('/devis/demande',authMiddleware,devisControllers.demandeDevis) //
-// router.post('/rendez-vous/proposition',authMiddleware,rendezVousControllers.proposerRendezVous)
-// router.post('/rendez-vous/proposition',authMiddleware,rendezVousControllers.proposerRendezVous)
-
-
-
-
-
-
-router.post('/devis/demande',authMiddleware,devisControllers.demandeDevis) // integrer le 03/04/25
 
 router.post('/devis/historique_tous_vehicule',authMiddleware,devisControllers.getAllHistoriqueDevisClient) 
 
@@ -45,24 +33,16 @@ router.post('/service/historique_tous_vehicule',authMiddleware,serviceController
 
 router.post('/service/historique_vehicule',authMiddleware,serviceControllers.getHistoriqueServiceClientVehicule)
 
-router.post('/facture/demande',authMiddleware,factureControllers.ajoutFacture)
-
-router.get('/facture/generer/:id',authMiddleware,factureControllers.genererFacture)
-
-router.get('/factures/:idClient',authMiddleware,factureControllers.getAllFactureByIdClient)
-
 router.get('/articles',authMiddleware,articleControllers.getAllArticle)
 
 router.post('/vehicule/ajout_utilisateur',authMiddleware,vehiculeControllers.addVehiculeToUtilisateur)
 
 router.get('/modele/tous',authMiddleware,modeleControllers.getModeles)
 
-// integrer le 02/04/25
 router.delete('/rendez-vous/annulation/:rendezVousId',authMiddleware, rendezVousControllers.annulerRendezVous)
 
 router.get('/taches/tous/:rendezVousId',authMiddleware,tacheControllers.getEtatTacheRendezVous)
 
-// intégrée le 01/04/25
 router.post('/rendez-vous/validation',authMiddleware,rendezVousControllers.validerRendezVous)
 
 router.get('/vehicules/:utilisateurId',authMiddleware,vehiculeControllers.getVehicules);
@@ -73,7 +53,6 @@ router.get('/rendez-vous/indisponible',authMiddleware,tacheControllers.getTacheD
 
 router.get('/rendez-vous/tous/:idClient',authMiddleware, rendezVousControllers.getAllRendezVousClient)
 
-// integrée le 30/03/25
 router.get('/notifications/:id_client',authMiddleware,notificationControllers.getNotificationsByIdClient)
 
 router.put('/notification/etat/:id_notification',authMiddleware,notificationControllers.updateEtatNotification)
