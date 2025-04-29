@@ -1,4 +1,4 @@
-const {updateEtatTache,getTacheDateIndisponible,getAllTacheMecanicien, getEtatTacheRendezVous} = require('../services/TacheService')
+const {updateEtatTache,getTacheDateIndisponible,getAllTacheMecanicien, getEtatTacheRendezVous,updateFactureTacheEtat} = require('../services/TacheService')
 exports.updateEtatTache = async (req,res) =>{
     try {
         const {mecanicienId,newEtat,libelle} = req.body;
@@ -16,6 +16,24 @@ exports.updateEtatTache = async (req,res) =>{
         res.status(500).json({ message: "Erreur lors du changement d'etat de tâche." });
     }
 }
+
+exports.updateFactureTacheEtatRoute = async (req, res) => {
+    try {
+      const { newEtat } = req.body;
+      const id_tache = req.params.id_tache;
+      
+      if (!id_tache || newEtat == undefined || newEtat == null) {
+        return res.status(400).json({ message: "Tous les champs sont requis" });
+      }
+      const result = await updateFactureTacheEtat(id_tache, newEtat);        
+      res.status(201).json({ message: "Etat de la facture de cette tâche a été modifié avec succès", data: result });
+    } catch (error) {
+      console.error("Erreur lors du changement de l'etat de la facture de cette tâche:", error);
+  
+      // Renvoyer une réponse d'erreur générique
+      res.status(500).json({ message: "Erreur lors du changement de l'etat de la facture de cette tâche." });
+    }
+  };
 
 exports.getAllTacheMecanicien = async (req,res) =>{
     try {

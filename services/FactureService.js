@@ -18,7 +18,7 @@ const { insertMouvementStock } = require("./StockService");
   checkArticle = boolean pour savoir hoe mividy art ao amintsika ilay olona na tsia
 */
 
-async function ajoutFacture(vehiculeId, clientId, serviceEtArticles) {
+async function ajoutFacture(vehiculeId, tacheId,clientId, serviceEtArticles) {
   let prixTotal = 0.0;
   let articleInfo = [];
   let tabIdServices = []
@@ -65,6 +65,7 @@ async function ajoutFacture(vehiculeId, clientId, serviceEtArticles) {
     const newFacture = new Facture({
       id_client: clientId,
       id_vehicule: vehiculeId,
+      id_tache: tacheId,
       prix_total: prixTotal + prixTotArticle,
       services: tabIdServices,
       articles: articleInfo
@@ -76,6 +77,18 @@ async function ajoutFacture(vehiculeId, clientId, serviceEtArticles) {
 
   } catch (error) {
     console.error("Erreur lors de la création de facture :", error.message);
+    throw error;
+  }
+}
+
+async function getFactureByTacheId(tacheId) {
+  try {
+    const facture = await Facture.findOne({ id_tache: tacheId });
+    if(!facture) throw new Error("Aucune facture trouvée");
+    
+    return facture._id;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des factures :", error);
     throw error;
   }
 }
@@ -218,4 +231,4 @@ function getTotalArticles(articles) {
   return articles.reduce((sum, a) => sum + (a.id_article.prix * a.nbr_article), 0);
 }
 
-module.exports = { ajoutFacture, miseAJourFacture, getIdLastFacture ,creerFacturePDF, getAllFactureByIdclient };
+module.exports = { ajoutFacture, miseAJourFacture, getIdLastFacture ,creerFacturePDF, getAllFactureByIdclient, getFactureByTacheId };

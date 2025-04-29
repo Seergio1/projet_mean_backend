@@ -26,5 +26,9 @@ router.put('/facture/mise_a_jour/:factureId',authMiddleware,factureControllers.m
 
 router.get('/factures/:idClient',authMiddleware,factureControllers.getAllFactureByIdClient)
 
+router.put('/facture/modification_etat_facture/:id_tache', authMiddleware, mecanicienMiddleware, tacheControllers.updateFactureTacheEtatRoute);
+
+router.get('/facture/tache/:tacheId', authMiddleware, mecanicienMiddleware, factureControllers.getFactureByTache);
+
 
 module.exports = router;

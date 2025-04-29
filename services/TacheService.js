@@ -97,5 +97,18 @@ async function updateEtatTache(id_tache,newEtat,libelle = "Déscription tâche")
 }
 
 
+async function updateFactureTacheEtat(id_tache,newEtat) {
+    try {
+        const tache = await Tache.findById(id_tache);
+        if (!tache) throw new Error("Tâche introuvable");
+        tache.facture = newEtat;
+        await tache.save();
+        return tache;
+    } catch (error) {
+        throw new Error(error)
+    }
+}
 
-module.exports = {getDateFin,updateEtatTache,getAllTacheMecanicien,getTacheDateIndisponible,getEtatTacheRendezVous};
+
+
+module.exports = {getDateFin,updateEtatTache,getAllTacheMecanicien,updateFactureTacheEtat,getTacheDateIndisponible,getEtatTacheRendezVous};
