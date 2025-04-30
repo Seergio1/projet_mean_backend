@@ -4,6 +4,7 @@ const authMiddleware = require('../middlewares/auth');
 const {managerMiddleware} = require('../middlewares/role');
 const rendezVousControllers = require('../controllers/rendezVousControllers')
 const stockControllers = require('../controllers/stockControllers');
+const commentaireControllers = require('../controllers/commentaireControllers');
 
 const modeleControllers = require('../controllers/modeleController')
 
@@ -58,6 +59,8 @@ router.post('/modele/ajout',authMiddleware,modeleControllers.createModele)
 router.put('/modele/update/:id',authMiddleware,modeleControllers.updateModeleById)
 
 router.delete('/modele/delete/:id',authMiddleware,modeleControllers.removeModele)
+
+router.get('/commentaires', commentaireControllers.findAllCommentaire);
 
  
 module.exports = router;

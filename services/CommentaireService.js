@@ -28,6 +28,16 @@ async function findAllCommentaire() {
 
         throw error;
     }
+}async function findCommentaireByIdUtilisateur(id_client) {
+    try {
+        const commentaires = Commentaires.find({id_utilisateurs: id_client}).sort({ date: -1 });
+        return commentaires;
+    } catch (error) {
+        console.error("erreur dans findCommentaireByIdUtilisateur", error);
+        throw error;
+    }
 }
 
-module.exports = {insertCommentaire, findAllCommentaire};
+
+
+module.exports = {insertCommentaire, findAllCommentaire, findCommentaireByIdUtilisateur};

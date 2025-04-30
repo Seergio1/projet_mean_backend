@@ -27,3 +27,15 @@ exports.findAllCommentaire = async (req, res) => {
         res.status(500).json({ message: "erreur find all commentaire", error});
     }
 }
+
+exports.findCommentaireByClient = async (req,res) => {
+    try {
+        const id_client = req.params.id_client;
+        const commentaires = await commentaireService.findCommentaireByIdUtilisateur(id_client);
+        res.status(201).json({ message: "find commentaire by client avec succes", data: commentaires });
+    } catch (error) {
+        console.error("erreur findCommentaireByClient controllers", error);
+
+        res.status(500).json({ message: "erreur findCommentaireByClient", error});
+    }
+}
