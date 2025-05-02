@@ -110,6 +110,7 @@ async function validerRendezVous(
     const rendezVous = new RendezVous({
       id_client: clientId,
       id_vehicule: vehiculeId,
+      id_mecanicien: mecanicienDisponible._id,
       date: dateDebutFinal,
       services: servicesIds, // Liste des services demandés
       etat: "accepté", // L'état initial est 'en attente'

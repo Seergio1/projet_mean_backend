@@ -13,12 +13,13 @@
   },
   "libelle": "Déscription tâche",
   "prix": 152500,
-  "etat": "en attente",
+  "etat": "terminée",
   "date_debut": {
-    "$date": "2025-04-04T09:00:00.000Z"
+    "$date": "2025-04-25T14:42:27.508Z"
   },
   "date_fin": {
-    "$date": "2025-04-04T10:00:00.000Z"
+    "$date": "2025-04-25T15:42:27.508Z"
   },
-  "__v": 0
+  "__v": 0,
+  "facture": true
 }]

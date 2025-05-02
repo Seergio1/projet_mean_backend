@@ -23,7 +23,7 @@ router.post('/devis/demande',authMiddleware,devisControllers.demandeDevis)
 
 router.put('/commentaire', commentaireControllers.insertCommentaire);
 
-router.get('/commentaires', commentaireControllers.findCommentaireByClient);
+router.get('/commentaires/:id_client', commentaireControllers.findCommentaireByClient);
 
 router.post('/devis/historique_tous_vehicule',authMiddleware,devisControllers.getAllHistoriqueDevisClient) 
 
