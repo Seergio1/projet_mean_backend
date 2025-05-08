@@ -184,13 +184,36 @@ const getTotalDepenseArtice = async () => {
 
 
 // avoir le stock actuel pour le notification
-const getStockActuel = async () => {
+const getStockActuel = async (nbr_min) => {
     try {
       const result = await MouvementStock.aggregate([
         {
           $group: {
             _id: '$id_Article',
             stock: { $sum: { $subtract: ['$entrer', '$sortie'] } }
+          }
+        },
+        {
+          $lookup: {
+            from: 'articles',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'article'
+          }
+        },
+        {
+          $unwind: '$article'
+        },
+        {
+          $match: {
+            stock: { $lt: nbr_min }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            article: 1,
+            stock: 1
           }
         }
       ]);
@@ -203,4 +226,4 @@ const getStockActuel = async () => {
 
 
 
-module.exports = {getTotalDepenseArtice, getAllMouvementStock, insertMouvementStock, getStockArticle, getStockAvecDetails, getStockAvecDetailsByArticle};                        
+module.exports = {getTotalDepenseArtice, getAllMouvementStock, insertMouvementStock, getStockArticle, getStockAvecDetails, getStockAvecDetailsByArticle,getStockActuel};                        

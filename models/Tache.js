@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const TacheSchema = new mongoose.Schema({
-    id_mecanicien: { type: mongoose.Schema.Types.ObjectId, ref: "Mecanicien", required: true },
+    id_mecanicien: { type: mongoose.Schema.Types.ObjectId, ref: "Utilisateur", required: true },
     id_vehicule: { type: mongoose.Schema.Types.ObjectId, ref: "Vehicule", required: true },
     id_rendez_vous : { type: mongoose.Schema.Types.ObjectId, ref: "RendezVous", required: true },
     libelle: { type: String, required: true}, 

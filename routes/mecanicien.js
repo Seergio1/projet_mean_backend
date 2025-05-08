@@ -18,13 +18,13 @@ router.get('/taches/:mecanicienId', authMiddleware, mecanicienMiddleware, tacheC
 
 router.get('/rendez-vous/:rendezVousId', authMiddleware, mecanicienMiddleware, rendezVousControllers.getRendezVousById);
 
-router.post('/facture/demande',authMiddleware,factureControllers.ajoutFacture)
+router.post('/facture/demande',authMiddleware,mecanicienMiddleware,factureControllers.ajoutFacture)
 
-router.get('/facture/pdf/:id',authMiddleware,factureControllers.genererFacture)
+router.get('/facture/pdf/:id',authMiddleware,mecanicienMiddleware,factureControllers.genererFacture)
 
-router.put('/facture/mise_a_jour/:factureId',authMiddleware,factureControllers.miseAJourFacture)
+router.put('/facture/mise_a_jour/:factureId',authMiddleware,mecanicienMiddleware,factureControllers.miseAJourFacture)
 
-router.get('/factures/:idClient',authMiddleware,factureControllers.getAllFactureByIdClient)
+router.get('/factures/:idClient',authMiddleware,mecanicienMiddleware,factureControllers.getAllFactureByIdClient)
 
 router.put('/facture/modification_etat_facture/:id_tache', authMiddleware, mecanicienMiddleware, tacheControllers.updateFactureTacheEtatRoute);
 

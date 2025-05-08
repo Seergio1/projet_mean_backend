@@ -1,4 +1,5 @@
 const Article = require('../models/Article');
+const Utilisateur = require('../models/Utilisateur');
 const { getInfoServiceById } = require('./ArticleService');
 // function getTotal(datas) {
 //     return datas.reduce((total, data) => total + data, 0);
@@ -69,6 +70,16 @@ function checkHeureDeTravail(date) {
     return ((hour >= 8 && hour < 12) || (hour >= 13 && hour < 17)) && !(hour === 12 && minutes === 0);
 }
 
+ async function getIdManager() {
+  try {
+    const manager = await Utilisateur.findOne({role: 'manager'});
+    if(!manager) throw new Error("Aucun utilisateur avec le role manager n'est present dans la base");
+    
+    return manager._id;
+  } catch (error) {
+    throw error;
+  }
+ }
 
 /*
 Si la tâche commence avant 17h mais finit après 17h
@@ -120,4 +131,4 @@ function formatDate(dateString) {
     }).format(date);
   }
 
-module.exports = {getDateSansDecalageHoraire,getDateFin_,getTotalArticle,checkHeureDeTravail,formatDate};
+module.exports = {getDateSansDecalageHoraire,getDateFin_,getTotalArticle,checkHeureDeTravail,formatDate,getIdManager};

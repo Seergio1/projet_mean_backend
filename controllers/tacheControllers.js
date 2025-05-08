@@ -1,4 +1,4 @@
-const {updateEtatTache,getTacheDateIndisponible,getAllTacheMecanicien, getEtatTacheRendezVous,updateFactureTacheEtat} = require('../services/TacheService')
+const {updateEtatTache,getTacheDateIndisponible,getAllTacheMecanicien, getEtatTacheRendezVous,updateFactureTacheEtat,getAllTache} = require('../services/TacheService')
 exports.updateEtatTache = async (req,res) =>{
     try {
         const {mecanicienId,newEtat,libelle} = req.body;
@@ -47,8 +47,19 @@ exports.getAllTacheMecanicien = async (req,res) =>{
     } catch (error) {
         console.error("Erreur lors de la recupération des tâche du mécanicien:", error);
 
-        // Renvoyer une réponse d'erreur générique
         res.status(500).json({ message: "Erreur lors de la recupération des tâche du mécanicien." });
+    }
+}
+
+exports.getAllTaches = async (req,res) =>{
+    try {
+        const result = await getAllTache();
+
+        res.status(201).json({ message: "Tous les tâches ont été recuperées avec succès", data: result });
+    } catch (error) {
+        console.error("Erreur lors de la recupération de tous les tâches:", error);
+
+        res.status(500).json({ message: "Erreur lors de la recupération de tous les tâches." });
     }
 }
 

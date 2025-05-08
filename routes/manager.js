@@ -5,8 +5,9 @@ const {managerMiddleware} = require('../middlewares/role');
 const rendezVousControllers = require('../controllers/rendezVousControllers')
 const stockControllers = require('../controllers/stockControllers');
 const commentaireControllers = require('../controllers/commentaireControllers');
-
+const tacheControllers = require('../controllers/tacheControllers')
 const modeleControllers = require('../controllers/modeleController')
+const factureControllers = require('../controllers/factureControllers')
 
 const router = express.Router();
 
@@ -54,14 +55,19 @@ router.get("/article", authMiddleware, managerMiddleware, stockControllers.getMo
 
 router.get("/article-depense", authMiddleware, managerMiddleware, stockControllers.getTotalDepenseArticle);
 
-router.post('/modele/ajout',authMiddleware,modeleControllers.createModele)
+router.post('/modele/ajout',authMiddleware,managerMiddleware,modeleControllers.createModele)
 
-router.put('/modele/update/:id',authMiddleware,modeleControllers.updateModeleById)
+router.put('/modele/update/:id',authMiddleware,managerMiddleware,modeleControllers.updateModeleById)
 
-router.delete('/modele/delete/:id',authMiddleware,modeleControllers.removeModele)
+router.delete('/modele/delete/:id',authMiddleware,managerMiddleware,modeleControllers.removeModele)
 
-router.get('/commentaires', commentaireControllers.findAllCommentaire);
+router.get('/commentaires',managerMiddleware, commentaireControllers.findAllCommentaire);
 
- 
+router.get('/taches', authMiddleware, managerMiddleware, tacheControllers.getAllTaches);
+
+router.get('/facture/pdf/:id',authMiddleware,managerMiddleware,factureControllers.genererFacture)
+
+router.get('/facture/tache/:tacheId', authMiddleware, managerMiddleware, factureControllers.getFactureByTache);
+
 module.exports = router;
 
