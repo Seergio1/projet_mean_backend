@@ -78,7 +78,8 @@ async function getStockArticle(id_Article) {
                 $group: {
                     _id: "$id_Article",
                     totalEntrer: { $sum: "$entrer" },
-                    totalSortie: { $sum: "$sortie" }
+                    totalSortie: { $sum: "$sortie" },
+                    seuil: { $first: "$mouvements.seuil" }
                 }
             }
         ]);
@@ -114,7 +115,8 @@ const getStockAvecDetails = async (nomArticle) => {
                     _id: "$_id",
                     nom: { $first: "$nom" }, // Garder le nom de l'article
                     totalEntrer: { $sum: { $ifNull: ["$mouvements.entrer", 0] } },
-                    totalSortie: { $sum: { $ifNull: ["$mouvements.sortie", 0] } }
+                    totalSortie: { $sum: { $ifNull: ["$mouvements.sortie", 0] } },
+                    seuil: { $first: "$mouvements.seuil" }
                 }
             }
         ]).sort({ totalSortie: -1 });
@@ -131,25 +133,26 @@ const getStockAvecDetailsByArticle = async (id_Article) => {
     try {
         const result = await Article.aggregate([
             {
-                $match: { _id: new mongoose.Types.ObjectId(id_Article) } // Sélectionner l'article
+                $match: { _id: new mongoose.Types.ObjectId(id_Article) }
             },
             {
                 $lookup: {
-                    from: "mouvementstocks", // Assurez-vous que le nom est correct
+                    from: "mouvementstocks", 
                     localField: "_id",
                     foreignField: "id_Article",
                     as: "mouvements"
                 }
             },
             {
-                $unwind: { path: "$mouvements", preserveNullAndEmptyArrays: true } // Gérer les articles sans mouvements
+                $unwind: { path: "$mouvements", preserveNullAndEmptyArrays: true } 
             },
             {
                 $group: {
                     _id: "$_id",
                     nom: { $first: "$nom" }, // Garder le nom de l'article
                     totalEntrer: { $sum: { $ifNull: ["$mouvements.entrer", 0] } },
-                    totalSortie: { $sum: { $ifNull: ["$mouvements.sortie", 0] } }
+                    totalSortie: { $sum: { $ifNull: ["$mouvements.sortie", 0] } },
+                    seuil: { $first: "$mouvements.seuil" }
                 }
             }
         ]);

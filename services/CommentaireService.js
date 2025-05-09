@@ -21,7 +21,12 @@ async function insertCommentaire(id_utilisateur, libelle) {
 
 async function findAllCommentaire() {
     try {
-        const commentaires = Commentaires.find().sort({ date: -1 });
+        const commentaires = Commentaires.find()
+        .sort({ date: -1 })
+        .populate({
+            path: "id_utilisateurs", 
+            select: "nom contact email"
+        });
         return commentaires;
     } catch (error) {
         console.error("erreur dans find all commentaire", error);

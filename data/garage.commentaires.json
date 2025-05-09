@@ -1,0 +1,14 @@
+[{
+  "_id": {
+    "$oid": "681c551ef26df6be5e86c389"
+  },
+  "id_utilisateurs": {
+    "$oid": "67d1c492360396ed94c59534"
+  },
+  "libelle": "Le service a été impeccable",
+  "date": {
+    "$date": "2025-05-08T06:54:22.407Z"
+  },
+  "etat": 0,
+  "__v": 0
+}]

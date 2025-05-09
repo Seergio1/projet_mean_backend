@@ -7,7 +7,8 @@ const MouvementStockSchema = new mongoose.Schema({
     entrer: { type: Number, default: 0},
     sortie: { type: Number, default: 0},
     prix: { type: Number, required: true},
-    prix_total: { type: Number, required: true}
+    prix_total: { type: Number, required: true},
+    seuil: { type: Number,default: 5, required: true}
 });
 
 MouvementStockSchema.pre("save", function (next) {

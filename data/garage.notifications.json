@@ -1,0 +1,30 @@
+[{
+  "_id": {
+    "$oid": "681c52ecf8deb8669393d38c"
+  },
+  "message": "Le stock de certains articles est bas : Filtre à huile (2)",
+  "titre": "Stock bas",
+  "id_client": {
+    "$oid": "67d1bdb3bd69d67516934f7e"
+  },
+  "lu": false,
+  "date": {
+    "$date": "2025-05-08T06:45:00.657Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681da46ce3b635f811fab4e1"
+  },
+  "message": "Le stock de certains articles devraient être revu : Filtre à huile (2)",
+  "titre": "Stock",
+  "id_client": {
+    "$oid": "67d1bdb3bd69d67516934f7e"
+  },
+  "lu": false,
+  "date": {
+    "$date": "2025-05-09T06:45:00.407Z"
+  },
+  "__v": 0
+}]

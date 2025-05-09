@@ -7,7 +7,8 @@ const stockControllers = require('../controllers/stockControllers');
 const commentaireControllers = require('../controllers/commentaireControllers');
 const tacheControllers = require('../controllers/tacheControllers')
 const modeleControllers = require('../controllers/modeleController')
-const factureControllers = require('../controllers/factureControllers')
+const factureControllers = require('../controllers/factureControllers');
+const { auth } = require('googleapis/build/src/apis/abusiveexperiencereport');
 
 const router = express.Router();
 
@@ -61,7 +62,7 @@ router.put('/modele/update/:id',authMiddleware,managerMiddleware,modeleControlle
 
 router.delete('/modele/delete/:id',authMiddleware,managerMiddleware,modeleControllers.removeModele)
 
-router.get('/commentaires',managerMiddleware, commentaireControllers.findAllCommentaire);
+router.get('/commentaires',authMiddleware,managerMiddleware, commentaireControllers.findAllCommentaire);
 
 router.get('/taches', authMiddleware, managerMiddleware, tacheControllers.getAllTaches);
 
