@@ -3,6 +3,7 @@ const authMiddleware = require('../middlewares/auth');
 const {mecanicienMiddleware} = require('../middlewares/role')
 const tacheControllers = require('../controllers/tacheControllers')
 const rendezVousControllers = require('../controllers/rendezVousControllers') 
+const stockControllers = require('../controllers/stockControllers');
 const factureControllers = require('../controllers/factureControllers')
 
 
@@ -29,6 +30,8 @@ router.get('/factures/:idClient',authMiddleware,mecanicienMiddleware,factureCont
 router.put('/facture/modification_etat_facture/:id_tache', authMiddleware, mecanicienMiddleware, tacheControllers.updateFactureTacheEtatRoute);
 
 router.get('/facture/tache/:tacheId', authMiddleware, mecanicienMiddleware, factureControllers.getFactureByTache);
+
+router.get('/mouvement-stock-article/:id_article', authMiddleware, mecanicienMiddleware, stockControllers.getAllMouvementStockByArticle);
 
 
 module.exports = router;

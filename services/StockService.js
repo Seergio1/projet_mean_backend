@@ -13,6 +13,18 @@ async function getAllMouvementStock() {
         throw error;
     }
 }
+async function getAllMouvementStockByArticle(id_Article) {
+    let resultat = null;
+    try {
+        resultat = MouvementStock.find(id_Article)
+        .sort({ date: -1 })
+        .populate('id_Article');
+
+        return resultat;
+    } catch (error) {
+        throw new Error("Erreur lors de la demandes des mouvements de stock de cette article: " + error.message);
+    }
+}
 
 async function insertMouvementStock(type, nombre, id_Article) {
     let prix_total = 0;
@@ -229,4 +241,4 @@ const getStockActuel = async (nbr_min) => {
 
 
 
-module.exports = {getTotalDepenseArtice, getAllMouvementStock, insertMouvementStock, getStockArticle, getStockAvecDetails, getStockAvecDetailsByArticle,getStockActuel};                        
+module.exports = {getTotalDepenseArtice, getAllMouvementStock, insertMouvementStock, getStockArticle, getStockAvecDetails, getStockAvecDetailsByArticle,getStockActuel,getAllMouvementStockByArticle};                        

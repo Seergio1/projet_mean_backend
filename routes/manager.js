@@ -50,6 +50,8 @@ router.put('/rendez-vous/valider/:rendezVousId', authMiddleware, managerMiddlewa
 
 router.get('/mouvement-stock', authMiddleware, managerMiddleware, stockControllers.getAllMouvementStock);
 
+router.get('/mouvement-stock-article/:id_article', authMiddleware, managerMiddleware, stockControllers.getAllMouvementStockByArticle);
+
 router.put('/insert-mvmt', authMiddleware, managerMiddleware, stockControllers.insertMouvementStock);
 
 router.get("/article", authMiddleware, managerMiddleware, stockControllers.getMouvementArticle);

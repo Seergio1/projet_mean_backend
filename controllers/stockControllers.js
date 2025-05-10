@@ -13,6 +13,20 @@ exports.getAllMouvementStock = async (req, res) => {
     }
 };
 
+exports.getAllMouvementStockByArticle = async (req, res) => {
+    try {
+        const id_article = req.params.id_article;
+
+        const mouvementStocks = await stockService.getAllMouvementStockByArticle(id_article);
+
+        res.status(201).json({ message: "get all mouvement succes", data: mouvementStocks});
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error});
+    }
+};
+
 exports.insertMouvementStock = async (req, res) => {
     try {
         const {type, nombre, id_Article} = req.body;
