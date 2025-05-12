@@ -16,7 +16,7 @@ async function getAllMouvementStock() {
 async function getAllMouvementStockByArticle(id_Article) {
     let resultat = null;
     try {
-        resultat = MouvementStock.find(id_Article)
+        resultat = MouvementStock.find({id_Article: id_Article})
         .sort({ date: -1 })
         .populate('id_Article');
 

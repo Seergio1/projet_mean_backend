@@ -42,48 +42,48 @@ app.use('/api/manager', managerRoutes);
 
 // Planification de l'envoi de la notification 24 heures avant le rendez-vous
 
-cron.schedule('45 9 * * *', async () => { // chaque minuit
+cron.schedule('0 0 * * *', async () => { // chaque minuit
     
     try {
         const seuil = 5; 
-        // await refuserRendezVousAuto();
-        // const now = getDateSansDecalageHoraire(new Date());
+        await refuserRendezVousAuto();
+        const now = getDateSansDecalageHoraire(new Date());
         
-        // // Récupérer tous les rendez-vous dont la date est dans 24 heures
-        // const rendezVous = await RendezVous.find({
-        //     date: { $gte: now, $lte: getDateSansDecalageHoraire(new Date(now.getTime() + 24 * 60 * 60 * 1000) )},  // 24 heures à partir de maintenant
-        //     etat: 'accepté'
-        // }).populate('id_client');  // Récupérer les informations du client
+        // Récupérer tous les rendez-vous dont la date est dans 24 heures
+        const rendezVous = await RendezVous.find({
+            date: { $gte: now, $lte: getDateSansDecalageHoraire(new Date(now.getTime() + 24 * 60 * 60 * 1000) )},  // 24 heures à partir de maintenant
+            etat: 'accepté'
+        }).populate('id_client'); 
         
-        // for (const rdv of rendezVous) {
-        //     const client = rdv.id_client;
-        //     const tacheInvalide = await Tache.find({
-        //         id_rendez_vous:rdv._id,
-        //         etat: ["en attente"]
-        //     })
+        for (const rdv of rendezVous) {
+            const client = rdv.id_client;
+            const tacheInvalide = await Tache.find({
+                id_rendez_vous:rdv._id,
+                etat: ["en attente"]
+            })
             
-        //     if (tacheInvalide.length > 0) {
-        //         // Envoyer l'email de notification
-        //         // sendEmailNotification("giorakotomalala@gmail.com", rdv.date);
-        //         sendEmailNotification(rdv.id_client.email,Utils.formatDate(rdv.date),"rappel");
+            if (tacheInvalide.length > 0) {
+                // Envoyer l'email de notification
+                // sendEmailNotification("giorakotomalala@gmail.com", rdv.date);
+                sendEmailNotification(rdv.id_client.email,Utils.formatDate(rdv.date),"rappel");
 
-        //         const notification = new Notification({
-        //             titre: "Rappel de votre rendez-vous",
-        //             message: `Vous avez un rendez vous le ${Utils.formatDate(rdv.date)}`,
-        //             id_client: client._id,
-        //             id_rendez_vous: rdv._id
-        //         });
-        //         await notification.save();
-        //     }
+                const notification = new Notification({
+                    titre: "Rappel de votre rendez-vous",
+                    message: `Vous avez un rendez vous le ${Utils.formatDate(rdv.date)}`,
+                    id_client: client._id,
+                    id_rendez_vous: rdv._id
+                });
+                await notification.save();
+            }
 
-        // }
+        }
 
         // notification stock
         const id_manager = await Utils.getIdManager();
         const articleStock = await stockService.getStockActuel(seuil);
         if (articleStock.length > 0) {
             const notification = new Notification({
-                titre: "Stock",
+                titre: "Stock bas",
                 message: `Le stock de certains articles devraient être revu : ${articleStock.map(art => `${art.article.nom} (${art.stock})`).join(", ")}`,
                 id_client: id_manager
             });
