@@ -24,8 +24,8 @@ const PORT = process.env.PORT || 5000;
 
 
 const allowedOrigins = [
-  'http://192.168.0.36:5000',
-  'https://m1p12mean-sergio-dimby.vercel.app'
+    'http://192.168.0.36:5000',
+    'https://m1p12mean-sergio-dimby.vercel.app'
 ];
 
 // Middleware
