@@ -8,9 +8,6 @@ const fs = require("fs");
 const ejs = require("ejs");
 const { insertMouvementStock } = require("./StockService");
 
-
-
-
 /*
   serviceId + checkArticle = serviceEtArticle
   serviceEtArticle = [{}]
@@ -18,39 +15,38 @@ const { insertMouvementStock } = require("./StockService");
   checkArticle = boolean pour savoir hoe mividy art ao amintsika ilay olona na tsia
 */
 
-async function ajoutFacture(vehiculeId, tacheId,clientId, serviceEtArticles) {
+async function ajoutFacture(vehiculeId, tacheId, clientId, serviceEtArticles) {
   let prixTotal = 0.0;
   let articleInfo = [];
-  let tabIdServices = []
- 
+  let tabIdServices = [];
+
   try {
-    
-    for(const serviceEtArticle of serviceEtArticles){
-      let id_service = serviceEtArticle.serviceId
-      let check_article = serviceEtArticle.checkArticle
-      
-      
+    for (const serviceEtArticle of serviceEtArticles) {
+      let id_service = serviceEtArticle.serviceId;
+      let check_article = serviceEtArticle.checkArticle;
+
       const service = await getServiceById(id_service);
 
-      if (!service) throw new Error(`Service introuvable pour ID : ${id_service}`);
+      if (!service)
+        throw new Error(`Service introuvable pour ID : ${id_service}`);
 
-      if (typeof service.prix !== 'number' || isNaN(service.prix)) {
+      if (typeof service.prix !== "number" || isNaN(service.prix)) {
         throw new Error(`Le prix du service "${service.nom}" est invalide.`);
       }
 
-      prixTotal += service.prix
-      
+      prixTotal += service.prix;
 
       if (check_article == 1) {
         const result = await getInfoServiceById(service._id);
         if (result) articleInfo.push(...result);
       }
 
-      tabIdServices.push(id_service)
+      tabIdServices.push(id_service);
     }
-    
+
     // prix total des articles raha nividy tao amintsika
-    let prixTotArticle = articleInfo.length > 0 ? getTotalArticle(articleInfo) : 0.0;
+    let prixTotArticle =
+      articleInfo.length > 0 ? getTotalArticle(articleInfo) : 0.0;
 
     if (articleInfo.length > 0) {
       for (const artInf of articleInfo) {
@@ -59,8 +55,6 @@ async function ajoutFacture(vehiculeId, tacheId,clientId, serviceEtArticles) {
         }
       }
     }
-    
-    
 
     const newFacture = new Facture({
       id_client: clientId,
@@ -68,13 +62,11 @@ async function ajoutFacture(vehiculeId, tacheId,clientId, serviceEtArticles) {
       id_tache: tacheId,
       prix_total: prixTotal + prixTotArticle,
       services: tabIdServices,
-      articles: articleInfo
+      articles: articleInfo,
     });
 
-    
     const resultat = await newFacture.save();
     return resultat;
-
   } catch (error) {
     console.error("Erreur lors de la création de facture :", error.message);
     throw error;
@@ -84,8 +76,8 @@ async function ajoutFacture(vehiculeId, tacheId,clientId, serviceEtArticles) {
 async function getFactureByTacheId(tacheId) {
   try {
     const facture = await Facture.findOne({ id_tache: tacheId });
-    if(!facture) throw new Error("Aucune facture trouvée");
-    
+    if (!facture) throw new Error("Aucune facture trouvée");
+
     return facture._id;
   } catch (error) {
     console.error("Erreur lors de la récupération des factures :", error);
@@ -96,30 +88,39 @@ async function getFactureByTacheId(tacheId) {
 async function miseAJourFacture(factureId, serviceEtArticles) {
   try {
     const facture = await Facture.findById(factureId);
-
     if (!facture) {
       throw new Error(`Facture ${factureId} est introuvable`);
     }
 
-    const prixTotal = serviceEtArticles.reduce((acc, serviceEtArticle) => {
-      const service = getServiceById(serviceEtArticle.serviceId);
+    let prixTotal = 0.0;
+    let articleInfo = [];
+
+    for (const serviceEtArticle of serviceEtArticles) {
+      const service = await getServiceById(serviceEtArticle.serviceId);
       if (!service) {
-        throw new Error(`Service introuvable pour ID : ${serviceEtArticle.serviceId}`);
+        throw new Error(
+          `Service introuvable pour ID : ${serviceEtArticle.serviceId}`
+        );
       }
-      return acc + service.prix;
-    }, facture.prix_total);
 
-    const articleInfo = serviceEtArticles.reduce((acc, serviceEtArticle) => {
+      if (typeof service.prix !== "number" || isNaN(service.prix)) {
+        throw new Error(`Le prix du service ${service._id} est invalide`);
+      }
+
+      prixTotal += service.prix;
+
       if (serviceEtArticle.checkArticle === 1) {
-        const result = getInfoServiceById(serviceEtArticle.serviceId);
-        return acc.concat(result);
+        const result = await getInfoServiceById(serviceEtArticle.serviceId);
+        if (result) {
+          articleInfo.push(...result);
+        }
       }
-      return acc;
-    }, facture.articles);
+    }
 
-    const tabIdServices = serviceEtArticles.map((serviceEtArticle) => serviceEtArticle.serviceId);
+    const tabIdServices = serviceEtArticles.map((s) => s.serviceId);
 
-    const prixTotArticle = articleInfo.length > 0 ? getTotalArticle(articleInfo) : 0.0;
+    const prixTotArticle =
+      articleInfo.length > 0 ? getTotalArticle(articleInfo) : 0.0;
     const nouveauPrixTotal = prixTotal + prixTotArticle;
 
     await Facture.findByIdAndUpdate(facture._id, {
@@ -128,7 +129,7 @@ async function miseAJourFacture(factureId, serviceEtArticles) {
       services: tabIdServices,
     });
 
-    return facture;
+    return await Facture.findById(facture._id); // renvoyer la version mise à jour
   } catch (error) {
     console.error("Erreur lors de la mise à jour des factures :", error);
     throw error;
@@ -143,7 +144,10 @@ async function getIdLastFacture() {
     }
     return lastFacture._id;
   } catch (error) {
-    console.error("Erreur lors de la récupération de l'id de la dernière facture :", error);
+    console.error(
+      "Erreur lors de la récupération de l'id de la dernière facture :",
+      error
+    );
     throw error;
   }
 }
@@ -151,13 +155,13 @@ async function getIdLastFacture() {
 async function getAllFactureByIdclient(clientId) {
   try {
     const factures = await Facture.find({ id_client: clientId })
-    .populate("id_client")
-    .populate({
-      path: "id_vehicule",
-      populate: { path: "id_modele", select: "nom" }
-    })
-    .populate("services")
-    .populate("articles.id_article");
+      .populate("id_client")
+      .populate({
+        path: "id_vehicule",
+        populate: { path: "id_modele", select: "nom" },
+      })
+      .populate("services")
+      .populate("articles.id_article");
     return factures;
   } catch (error) {
     console.error("Erreur lors de la récupération des factures :", error);
@@ -166,14 +170,14 @@ async function getAllFactureByIdclient(clientId) {
 }
 
 async function creerFacturePDF(factureId) {
-  const logoPath = path.join(__dirname, '../templates','logo.png');
-  const logoBase64 = fs.readFileSync(logoPath, 'base64');
+  const logoPath = path.join(__dirname, "../templates", "logo.png");
+  const logoBase64 = fs.readFileSync(logoPath, "base64");
   try {
     const facture = await Facture.findById(factureId)
       .populate("id_client")
       .populate({
-          path: "id_vehicule",
-          populate: { path: "id_modele", select: "nom" }
+        path: "id_vehicule",
+        populate: { path: "id_modele", select: "nom" },
       })
       .populate("services")
       .populate("articles.id_article");
@@ -187,7 +191,7 @@ async function creerFacturePDF(factureId) {
         totalService: getTotalServices(facture.services),
         totalArticles: getTotalArticles(facture.articles),
         totalGlobal: facture.prix_total,
-        logoBase64
+        logoBase64,
       }
     );
 
@@ -201,17 +205,22 @@ async function creerFacturePDF(factureId) {
 
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'] // utile en production
+      args: ["--no-sandbox", "--disable-setuid-sandbox"], // utile en production
     });
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
-    await page.pdf({ path: outputPath, format: "A4", printBackground: true, margin: {
-      // top: '10mm',
-      // bottom: '10mm',
-      // left: '10mm',
-      // right: '10mm'
-    } });
+    await page.pdf({
+      path: outputPath,
+      format: "A4",
+      printBackground: true,
+      margin: {
+        // top: '10mm',
+        // bottom: '10mm',
+        // left: '10mm',
+        // right: '10mm'
+      },
+    });
 
     await browser.close();
 
@@ -228,7 +237,17 @@ function getTotalServices(services) {
 }
 
 function getTotalArticles(articles) {
-  return articles.reduce((sum, a) => sum + (a.id_article.prix * a.nbr_article), 0);
+  return articles.reduce(
+    (sum, a) => sum + a.id_article.prix * a.nbr_article,
+    0
+  );
 }
 
-module.exports = { ajoutFacture, miseAJourFacture, getIdLastFacture ,creerFacturePDF, getAllFactureByIdclient, getFactureByTacheId };
+module.exports = {
+  ajoutFacture,
+  miseAJourFacture,
+  getIdLastFacture,
+  creerFacturePDF,
+  getAllFactureByIdclient,
+  getFactureByTacheId,
+};
