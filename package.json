@@ -2,6 +2,7 @@
   "name": "projet_mean_backend",
   "version": "1.0.0",
   "description": "backend du projet MEAN master 1",
+  "postinstall": "puppeteer install",
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
