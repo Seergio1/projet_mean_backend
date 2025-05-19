@@ -13,8 +13,8 @@ let chrome;
 const isRender = process.env.RENDER === "true";
 
 if (isRender) {
-  puppeteer = require("puppeteer-core");
   chrome = require("chrome-aws-lambda");
+  puppeteer = require("puppeteer-core");
 } else {
   puppeteer = require("puppeteer");
 }
@@ -219,17 +219,17 @@ async function creerFacturePDF(factureId) {
     //   args: ["--no-sandbox", "--disable-setuid-sandbox"], // utile en production
     // });
     const browser = await puppeteer.launch(
-      isRender
-        ? {
-            args: chrome.args,
-            executablePath: await chrome.executablePath,
-            headless: chrome.headless,
-          }
-        : {
-            headless: true,
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-          }
-    );
+  isRender
+    ? {
+        args: chrome.args,
+        executablePath: await chrome.executablePath,
+        headless: chrome.headless,
+      }
+    : {
+        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      }
+);
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
