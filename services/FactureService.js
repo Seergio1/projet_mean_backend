@@ -293,13 +293,14 @@ async function creerFacturePDF(factureId) {
       pdf
         .create(html, {
           format: "A4",
-          orientation: "portrait",
-          border: {
-            top: "0mm",
-            bottom: "0mm",
-            left: "0mm",
-            right: "0mm",
-          },
+          // orientation: "portrait",
+          printBackground: true,
+          // border: {
+          //   top: "10mm",
+          //   bottom: "10mm",
+          //   left: "10mm",
+          //   right: "10mm",
+          // },
         })
         .toFile(outputPath, (err, res) => {
           if (err) {
