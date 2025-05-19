@@ -9,6 +9,7 @@
 
 # dependencies
 /node_modules
+.local-chromium/
 
 # IDEs and editors
 /.idea
