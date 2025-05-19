@@ -295,10 +295,10 @@ async function creerFacturePDF(factureId) {
           format: "A4",
           orientation: "portrait",
           border: {
-            top: "10mm",
-            bottom: "10mm",
-            left: "10mm",
-            right: "10mm",
+            top: "0mm",
+            bottom: "0mm",
+            left: "0mm",
+            right: "0mm",
           },
         })
         .toFile(outputPath, (err, res) => {

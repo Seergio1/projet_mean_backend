@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <title>Facture</title>
   <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
     @media print {
       body {
         background: none;
@@ -27,10 +34,10 @@
 
     .container {
       width: 210mm;
-      min-height: 297mm;
-      margin: 0 auto;
       padding: 25mm;
-      background: #ffffff;
+      box-sizing: border-box;
+      margin: 0 auto;
+      background: #fff;
       border-radius: 10px;
     }
 
@@ -79,7 +86,8 @@
       page-break-inside: auto;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #e0e0e0;
       padding: 12px 15px;
       text-align: left;
@@ -149,74 +157,111 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="header">
       <img src="data:image/png;base64,<%= logoBase64 %>" alt="Logo" width="100">
       <div class="facture-info">
-        <p>Facture n° <%= facture._id %></p>
-        <p>Date : <%= new Date().toLocaleDateString('fr-FR') %></p>
+        <p>Facture n° <%= facture._id %>
+        </p>
+        <p>Date : <%= new Date().toLocaleDateString('fr-FR') %>
+        </p>
       </div>
     </div>
 
     <h1>FACTURE</h1>
 
     <h3>Informations du client</h3>
-    <p>Nom : <%= facture.id_client.nom %></p>
-    <p>Email : <%= facture.id_client.email %></p>
-    <p>Contact : <%= facture.id_client.contact %></p>
+    <p>Nom : <%= facture.id_client.nom %>
+    </p>
+    <p>Email : <%= facture.id_client.email %>
+    </p>
+    <p>Contact : <%= facture.id_client.contact %>
+    </p>
 
     <h3>Informations du véhicule</h3>
-    <p>Modèle : <%= facture.id_vehicule.modele %></p>
-    <p>Numéro : <%= facture.id_vehicule.numero %></p>
+    <p>Modèle : <%= facture.id_vehicule.modele %>
+    </p>
+    <p>Numéro : <%= facture.id_vehicule.numero %>
+    </p>
 
     <h3>Services</h3>
 
     <table>
       <thead>
-        <tr><th>Référence</th><th>Durée</th><th>Prix</th></tr>
+        <tr>
+          <th>Référence</th>
+          <th>Durée</th>
+          <th>Prix</th>
+        </tr>
       </thead>
       <tbody>
-        <% facture.services.forEach((service) => { %>
+        <% facture.services.forEach((service)=> { %>
           <tr>
-            <td><%= service.nom %></td>
-            <td><%= service.duree %> min</td>
-            <td class="right"><%= service.prix.toLocaleString('fr-FR') %> MGA</td>
+            <td>
+              <%= service.nom %>
+            </td>
+            <td>
+              <%= service.duree %> min
+            </td>
+            <td class="right">
+              <%= service.prix.toLocaleString('fr-FR') %> MGA
+            </td>
           </tr>
-        <% }) %>
+          <% }) %>
       </tbody>
     </table>
 
     <h3>Articles</h3>
     <table>
       <thead>
-        <tr><th>Article</th><th>Qté</th><th>Prix Unitaire</th><th>Total</th></tr>
+        <tr>
+          <th>Article</th>
+          <th>Qté</th>
+          <th>Prix Unitaire</th>
+          <th>Total</th>
+        </tr>
       </thead>
       <tbody>
-        <% facture.articles.forEach((a) => { %>
+        <% facture.articles.forEach((a)=> { %>
           <tr>
-            <td><%= a.id_article.nom %></td>
-            <td><%= a.nbr_article %></td>
-            <td class="right"><%= a.id_article.prix.toLocaleString('fr-FR') %> MGA</td>
-            <td class="right"><%= (a.id_article.prix * a.nbr_article).toLocaleString('fr-FR') %> MGA</td>
+            <td>
+              <%= a.id_article.nom %>
+            </td>
+            <td>
+              <%= a.nbr_article %>
+            </td>
+            <td class="right">
+              <%= a.id_article.prix.toLocaleString('fr-FR') %> MGA
+            </td>
+            <td class="right">
+              <%= (a.id_article.prix * a.nbr_article).toLocaleString('fr-FR') %> MGA
+            </td>
           </tr>
-        <% }) %>
+          <% }) %>
       </tbody>
     </table>
 
     <div class="total">
       <div class="total-row">
         <span class="label">Total des services :</span>
-        <span class="amount"><%= totalService.toLocaleString('fr-FR') %> MGA</span>
+        <span class="amount">
+          <%= totalService.toLocaleString('fr-FR') %> MGA
+        </span>
       </div>
       <div class="total-row">
         <span class="label">Total des articles :</span>
-        <span class="amount"><%= totalArticles.toLocaleString('fr-FR') %> MGA</span>
+        <span class="amount">
+          <%= totalArticles.toLocaleString('fr-FR') %> MGA
+        </span>
       </div>
-      
+
       <div class="total-row total-bold">
         <span class="label">Total à payer :</span>
-        <span class="amount"><%= totalGlobal.toLocaleString('fr-FR') %> MGA</span>
+        <span class="amount">
+          <%= totalGlobal.toLocaleString('fr-FR') %> MGA
+        </span>
       </div>
     </div>
 
@@ -227,4 +272,5 @@
 
   </div>
 </body>
+
 </html>
