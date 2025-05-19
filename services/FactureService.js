@@ -7,12 +7,16 @@ const fs = require("fs");
 const ejs = require("ejs");
 const { insertMouvementStock } = require("./StockService");
 
-let puppeteer;
-let chrome;
+// const chromium = require('chrome-aws-lambda');
+const puppeteer = require('puppeteer-core');
+const isRender = process.env.IS_RENDER === "true";
+const isLambda = !!process.env.AWS_LAMBDA_FUNCTION_VERSION;
+const isServerless = isRender || isLambda;
 
-const isRender = process.env.RENDER === "true";
+let puppeteer, chrome;
 
-if (isRender) {
+
+if (isServerless) {
   chrome = require("chrome-aws-lambda");
   puppeteer = require("puppeteer-core");
 } else {
@@ -257,10 +261,10 @@ async function getAllFactureByIdclient(clientId) {
 // Fonctions auxiliaires
 
 async function creerFacturePDF(factureId) {
-  const logoPath = path.join(__dirname, "../templates", "logo.png");
-  const logoBase64 = fs.readFileSync(logoPath, "base64");
-
   try {
+    const logoPath = path.join(__dirname, "../templates", "logo.png");
+    const logoBase64 = fs.readFileSync(logoPath, "base64");
+
     const facture = await Facture.findById(factureId)
       .populate("id_client")
       .populate({
@@ -291,7 +295,7 @@ async function creerFacturePDF(factureId) {
     const outputPath = path.join(pdfDir, `facture_${facture._id}.pdf`);
 
     let browser;
-    if (isRender) {
+    if (isServerless) {
       const executablePath = await chrome.executablePath;
       if (!executablePath) {
         throw new Error("Chrome executable path is not found.");
@@ -299,9 +303,8 @@ async function creerFacturePDF(factureId) {
 
       browser = await puppeteer.launch({
         args: chrome.args,
-        executablePath: executablePath,
+        executablePath,
         headless: chrome.headless,
-        defaultViewport: chrome.defaultViewport,
       });
     } else {
       browser = await puppeteer.launch({
@@ -312,6 +315,7 @@ async function creerFacturePDF(factureId) {
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
+
     await page.pdf({
       path: outputPath,
       format: "A4",
@@ -326,6 +330,7 @@ async function creerFacturePDF(factureId) {
     throw error;
   }
 }
+
 
 function getTotalServices(services) {
   return services.reduce((sum, s) => sum + (s.prix || 0), 0);
