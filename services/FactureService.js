@@ -8,10 +8,12 @@ const ejs = require("ejs");
 const { insertMouvementStock } = require("./StockService");
 
 // const puppeteer = require("puppeteer-core");
-const puppeteer = require("puppeteer");
+// const puppeteer = require("puppeteer");
 // const chrome = require("chrome-aws-lambda");
 
 // const isRender = !!process.env.AWS_LAMBDA_FUNCTION_VERSION;
+
+const pdf = require("html-pdf");
 
 
 
@@ -287,23 +289,26 @@ async function creerFacturePDF(factureId) {
 
     const outputPath = path.join(pdfDir, `facture_${facture._id}.pdf`);
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    return new Promise((resolve, reject) => {
+      pdf
+        .create(html, {
+          format: "A4",
+          orientation: "portrait",
+          border: {
+            top: "10mm",
+            bottom: "10mm",
+            left: "10mm",
+            right: "10mm",
+          },
+        })
+        .toFile(outputPath, (err, res) => {
+          if (err) {
+            console.error("Erreur génération PDF :", err);
+            return reject(err);
+          }
+          resolve({ success: true, path: res.filename });
+        });
     });
-
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "networkidle0" });
-
-    await page.pdf({
-      path: outputPath,
-      format: "A4",
-      printBackground: true,
-    });
-
-    await browser.close();
-
-    return { success: true, path: outputPath };
   } catch (error) {
     console.error("Erreur génération PDF :", error);
     throw error;
