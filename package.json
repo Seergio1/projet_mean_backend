@@ -7,7 +7,6 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "postinstall": "puppeteer install",
-    "build": "puppeteer install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
