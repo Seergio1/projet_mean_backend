@@ -180,9 +180,86 @@ async function getAllFactureByIdclient(clientId) {
   }
 }
 
+// async function creerFacturePDF(factureId) {
+//   const logoPath = path.join(__dirname, "../templates", "logo.png");
+//   const logoBase64 = fs.readFileSync(logoPath, "base64");
+//   try {
+//     const facture = await Facture.findById(factureId)
+//       .populate("id_client")
+//       .populate({
+//         path: "id_vehicule",
+//         populate: { path: "id_modele", select: "nom" },
+//       })
+//       .populate("services")
+//       .populate("articles.id_article");
+
+//     if (!facture) throw new Error("Facture non trouvée");
+
+//     const html = await ejs.renderFile(
+//       path.join(__dirname, "../templates", "facture.ejs"),
+//       {
+//         facture,
+//         totalService: getTotalServices(facture.services),
+//         totalArticles: getTotalArticles(facture.articles),
+//         totalGlobal: facture.prix_total,
+//         logoBase64,
+//       }
+//     );
+
+//     // Vérifie que le dossier pdf existe
+//     const pdfDir = path.join(__dirname, "../pdf");
+//     if (!fs.existsSync(pdfDir)) {
+//       fs.mkdirSync(pdfDir, { recursive: true });
+//     }
+
+//     const outputPath = path.join(pdfDir, `facture_${facture._id}.pdf`);
+
+//     // const browser = await puppeteer.launch({
+//     //   headless: true,
+//     //   args: ["--no-sandbox", "--disable-setuid-sandbox"], // utile en production
+//     // });
+//     const browser = await puppeteer.launch(
+//   isRender
+//     ? {
+//         args: chrome.args,
+//         executablePath: await chrome.executablePath,
+//         headless: chrome.headless,
+//       }
+//     : {
+//         headless: true,
+//         args: ["--no-sandbox", "--disable-setuid-sandbox"],
+//       }
+// );
+
+//     const page = await browser.newPage();
+//     await page.setContent(html, { waitUntil: "networkidle0" });
+//     await page.pdf({
+//       path: outputPath,
+//       format: "A4",
+//       printBackground: true,
+//       margin: {
+//         // top: '10mm',
+//         // bottom: '10mm',
+//         // left: '10mm',
+//         // right: '10mm'
+//       },
+//     });
+
+//     await browser.close();
+
+//     return { success: true, path: outputPath };
+//   } catch (error) {
+//     console.error("Erreur génération PDF :", error);
+//     throw error;
+//   }
+// }
+
+// Fonctions auxiliaires
+
 async function creerFacturePDF(factureId) {
   const logoPath = path.join(__dirname, "../templates", "logo.png");
   const logoBase64 = fs.readFileSync(logoPath, "base64");
+
   try {
     const facture = await Facture.findById(factureId)
       .populate("id_client")
@@ -206,7 +283,6 @@ async function creerFacturePDF(factureId) {
       }
     );
 
-    // Vérifie que le dossier pdf existe
     const pdfDir = path.join(__dirname, "../pdf");
     if (!fs.existsSync(pdfDir)) {
       fs.mkdirSync(pdfDir, { recursive: true });
@@ -214,22 +290,25 @@ async function creerFacturePDF(factureId) {
 
     const outputPath = path.join(pdfDir, `facture_${facture._id}.pdf`);
 
-    // const browser = await puppeteer.launch({
-    //   headless: true,
-    //   args: ["--no-sandbox", "--disable-setuid-sandbox"], // utile en production
-    // });
-    const browser = await puppeteer.launch(
-  isRender
-    ? {
-        args: chrome.args,
-        executablePath: await chrome.executablePath,
-        headless: chrome.headless,
+    let browser;
+    if (isRender) {
+      const executablePath = await chrome.executablePath;
+      if (!executablePath) {
+        throw new Error("Chrome executable path is not found.");
       }
-    : {
+
+      browser = await puppeteer.launch({
+        args: chrome.args,
+        executablePath: executablePath,
+        headless: chrome.headless,
+        defaultViewport: chrome.defaultViewport,
+      });
+    } else {
+      browser = await puppeteer.launch({
         headless: true,
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      }
-);
+      });
+    }
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
@@ -237,12 +316,6 @@ async function creerFacturePDF(factureId) {
       path: outputPath,
       format: "A4",
       printBackground: true,
-      margin: {
-        // top: '10mm',
-        // bottom: '10mm',
-        // left: '10mm',
-        // right: '10mm'
-      },
     });
 
     await browser.close();
@@ -254,7 +327,6 @@ async function creerFacturePDF(factureId) {
   }
 }
 
-// Fonctions auxiliaires
 function getTotalServices(services) {
   return services.reduce((sum, s) => sum + (s.prix || 0), 0);
 }
