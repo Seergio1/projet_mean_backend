@@ -15,8 +15,6 @@ const { insertMouvementStock } = require("./StockService");
 
 const pdf = require("html-pdf");
 
-
-
 /*
   serviceId + checkArticle = serviceEtArticle
   serviceEtArticle = [{}]
@@ -254,7 +252,6 @@ async function getAllFactureByIdclient(clientId) {
 
 // Fonctions auxiliaires
 
-
 async function creerFacturePDF(factureId) {
   try {
     const logoPath = path.join(__dirname, "../templates", "logo.png");
@@ -295,12 +292,12 @@ async function creerFacturePDF(factureId) {
           format: "A4",
           // orientation: "portrait",
           printBackground: true,
-          // border: {
-          //   top: "10mm",
-          //   bottom: "10mm",
-          //   left: "10mm",
-          //   right: "10mm",
-          // },
+          margin: {
+            top: "0mm",
+            right: "0mm",
+            bottom: "0mm",
+            left: "0mm",
+          },
         })
         .toFile(outputPath, (err, res) => {
           if (err) {
