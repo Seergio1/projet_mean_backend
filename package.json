@@ -20,8 +20,7 @@
   "homepage": "https://github.com/Seergio1/projet_mean_backend#readme",
   "devDependencies": {
     "eslint": "^9.22.0",
-    "nodemon": "^3.1.9",
-    "puppeteer": "^24.8.2"
+    "nodemon": "^3.1.9"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

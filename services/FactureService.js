@@ -7,11 +7,11 @@ const fs = require("fs");
 const ejs = require("ejs");
 const { insertMouvementStock } = require("./StockService");
 
-const puppeteerCore = require("puppeteer-core");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
+// const puppeteer = require("puppeteer");
 const chrome = require("chrome-aws-lambda");
 
-const isRender = !!process.env.AWS_LAMBDA_FUNCTION_VERSION;
+// const isRender = !!process.env.AWS_LAMBDA_FUNCTION_VERSION;
 
 
 
@@ -252,13 +252,12 @@ async function getAllFactureByIdclient(clientId) {
 
 // Fonctions auxiliaires
 
+
 async function creerFacturePDF(factureId) {
   try {
-    // 1. Charger le logo en base64
     const logoPath = path.join(__dirname, "../templates", "logo.png");
     const logoBase64 = fs.readFileSync(logoPath, "base64");
 
-    // 2. Récupérer les données de la facture
     const facture = await Facture.findById(factureId)
       .populate("id_client")
       .populate({
@@ -270,7 +269,6 @@ async function creerFacturePDF(factureId) {
 
     if (!facture) throw new Error("Facture non trouvée");
 
-    // 3. Générer le HTML avec EJS
     const html = await ejs.renderFile(
       path.join(__dirname, "../templates", "facture.ejs"),
       {
@@ -282,7 +280,6 @@ async function creerFacturePDF(factureId) {
       }
     );
 
-    // 4. Créer le dossier PDF s’il n’existe pas
     const pdfDir = path.join(__dirname, "../pdf");
     if (!fs.existsSync(pdfDir)) {
       fs.mkdirSync(pdfDir, { recursive: true });
@@ -290,19 +287,12 @@ async function creerFacturePDF(factureId) {
 
     const outputPath = path.join(pdfDir, `facture_${facture._id}.pdf`);
 
-    // 5. Lancer Puppeteer (local ou Render)
-    const browser = isRender
-      ? await puppeteerCore.launch({
-          args: chrome.args,
-          executablePath: await chrome.executablePath,
-          headless: chrome.headless,
-        })
-      : await puppeteer.launch({
-          headless: true,
-          args: ["--no-sandbox", "--disable-setuid-sandbox"],
-        });
+    const browser = await puppeteer.launch({
+      args: chrome.args,
+      executablePath: await chrome.executablePath,
+      headless: chrome.headless,
+    });
 
-    // 6. Générer le PDF
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
     await page.pdf({
