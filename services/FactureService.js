@@ -7,9 +7,9 @@ const fs = require("fs");
 const ejs = require("ejs");
 const { insertMouvementStock } = require("./StockService");
 
-const puppeteer = require("puppeteer-core");
-// const puppeteer = require("puppeteer");
-const chrome = require("chrome-aws-lambda");
+// const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
+// const chrome = require("chrome-aws-lambda");
 
 // const isRender = !!process.env.AWS_LAMBDA_FUNCTION_VERSION;
 
@@ -210,22 +210,22 @@ async function getAllFactureByIdclient(clientId) {
 
 //     const outputPath = path.join(pdfDir, `facture_${facture._id}.pdf`);
 
-//     // const browser = await puppeteer.launch({
-//     //   headless: true,
-//     //   args: ["--no-sandbox", "--disable-setuid-sandbox"], // utile en production
-//     // });
-//     const browser = await puppeteer.launch(
-//   isRender
-//     ? {
-//         args: chrome.args,
-//         executablePath: await chrome.executablePath,
-//         headless: chrome.headless,
-//       }
-//     : {
-//         headless: true,
-//         args: ["--no-sandbox", "--disable-setuid-sandbox"],
-//       }
-// );
+//     const browser = await puppeteer.launch({
+//       headless: true,
+//       args: ["--no-sandbox", "--disable-setuid-sandbox"], // utile en production
+//     });
+// //     const browser = await puppeteer.launch(
+// //   isRender
+// //     ? {
+// //         args: chrome.args,
+// //         executablePath: await chrome.executablePath,
+// //         headless: chrome.headless,
+// //       }
+// //     : {
+// //         headless: true,
+// //         args: ["--no-sandbox", "--disable-setuid-sandbox"],
+// //       }
+// // );
 
 //     const page = await browser.newPage();
 //     await page.setContent(html, { waitUntil: "networkidle0" });
@@ -288,13 +288,13 @@ async function creerFacturePDF(factureId) {
     const outputPath = path.join(pdfDir, `facture_${facture._id}.pdf`);
 
     const browser = await puppeteer.launch({
-      args: chrome.args,
-      executablePath: await chrome.executablePath,
-      headless: chrome.headless,
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
+
     await page.pdf({
       path: outputPath,
       format: "A4",
