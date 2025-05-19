@@ -7,21 +7,18 @@ const fs = require("fs");
 const ejs = require("ejs");
 const { insertMouvementStock } = require("./StockService");
 
-// const chromium = require('chrome-aws-lambda');
+const chrome = require('chrome-aws-lambda');
 const puppeteer = require('puppeteer-core');
-const isRender = process.env.IS_RENDER === "true";
-const isLambda = !!process.env.AWS_LAMBDA_FUNCTION_VERSION;
-const isServerless = isRender || isLambda;
-
-let puppeteer, chrome;
+const isRender = process.env.AWS_LAMBDA_FUNCTION_VERSION || process.env.IS_RENDER;
 
 
-if (isServerless) {
-  chrome = require("chrome-aws-lambda");
-  puppeteer = require("puppeteer-core");
-} else {
-  puppeteer = require("puppeteer");
-}
+
+// if (isServerless) {
+//   chrome = require("chrome-aws-lambda");
+//   puppeteer = require("puppeteer-core");
+// } else {
+//   puppeteer = require("puppeteer");
+// }
 
 /*
   serviceId + checkArticle = serviceEtArticle
@@ -295,7 +292,7 @@ async function creerFacturePDF(factureId) {
     const outputPath = path.join(pdfDir, `facture_${facture._id}.pdf`);
 
     let browser;
-    if (isServerless) {
+    if (isRender) {
       const executablePath = await chrome.executablePath;
       if (!executablePath) {
         throw new Error("Chrome executable path is not found.");
