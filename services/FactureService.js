@@ -8,7 +8,7 @@ const ejs = require("ejs");
 const { insertMouvementStock } = require("./StockService");
 
 // const chromium = require('chrome-aws-lambda');
-const puppeteer = require('puppeteer-core');
+// const puppeteer = require('puppeteer-core');
 const isRender = process.env.IS_RENDER === "true";
 const isLambda = !!process.env.AWS_LAMBDA_FUNCTION_VERSION;
 const isServerless = isRender || isLambda;
