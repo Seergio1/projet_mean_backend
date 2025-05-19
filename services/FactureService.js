@@ -2,11 +2,22 @@ const Facture = require("../models/Facture");
 const { getTotalArticle } = require("../services/Utils");
 const { getInfoServiceById } = require("./ArticleService");
 const { getServiceById } = require("./ServiceService");
-const puppeteer = require("puppeteer");
 const path = require("path");
 const fs = require("fs");
 const ejs = require("ejs");
 const { insertMouvementStock } = require("./StockService");
+
+let puppeteer;
+let chrome;
+
+const isRender = process.env.RENDER === "true";
+
+if (isRender) {
+  puppeteer = require("puppeteer-core");
+  chrome = require("chrome-aws-lambda");
+} else {
+  puppeteer = require("puppeteer");
+}
 
 /*
   serviceId + checkArticle = serviceEtArticle
@@ -203,10 +214,22 @@ async function creerFacturePDF(factureId) {
 
     const outputPath = path.join(pdfDir, `facture_${facture._id}.pdf`);
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"], // utile en production
-    });
+    // const browser = await puppeteer.launch({
+    //   headless: true,
+    //   args: ["--no-sandbox", "--disable-setuid-sandbox"], // utile en production
+    // });
+    const browser = await puppeteer.launch(
+      isRender
+        ? {
+            args: chrome.args,
+            executablePath: await chrome.executablePath,
+            headless: chrome.headless,
+          }
+        : {
+            headless: true,
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+          }
+    );
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
