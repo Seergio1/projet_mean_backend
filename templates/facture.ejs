@@ -4,13 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Facture</title>
-  <!-- <style>
-    **,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-    }
-
+  <style>
     @media print {
       body {
         background: none;
@@ -26,20 +20,18 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size: 14px;
-      background-color: #ffffff;
+      background: white;
       padding: 0;
       margin: 0;
     }
 
     .container {
-      width: 794px;
-      min-height: 1123px;
-      padding: 60px;
-      margin: 0 auto;
-      box-sizing: border-box;
-      background: #fff;
-      border-radius: 10px;
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
     .header {
@@ -49,22 +41,33 @@
       margin-bottom: 30px;
     }
 
-    .header img {
-      width: 100px;
+    .facture-title {
+      font-size: 30px;
+      margin: 0;
+    }
+
+    .logo {
+      height: 100px;
+      width: auto;
+      max-width: 100%;
     }
 
     .facture-info {
-      text-align: right;
-      font-size: 16px;
+      font-size: 0.85rem;
       color: #555;
+      /* gris foncé doux */
+      text-align: right;
+      line-height: 1.4;
+      margin-top: 10px;
+      margin-bottom: 10px;
     }
 
-    h1 {
-      text-align: center;
-      font-size: 26px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 20px;
+    .facture-info p {
+      margin: 0;
+    }
+
+    .column {
+      width: 48%;
     }
 
     h3 {
@@ -156,269 +159,11 @@
       margin-top: 20px;
       color: #555;
     }
-  </style> -->
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: white;
-      padding: 0;
-      margin: 0;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: white;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-
-    .facture-title {
-      font-size: 30px;
-      margin: 0;
-    }
-
-    .logo {
-      height: 100px;
-      width: auto;
-      max-width: 100%;
-    }
-
-    .facture-info {
-      font-size: 0.85rem;
-      color: #555;
-      /* gris foncé doux */
-      text-align: right;
-      line-height: 1.4;
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
-
-    .facture-info p {
-      margin: 0;
-    }
-
-    .column {
-      width: 48%;
-    }
-
-    h3 {
-      font-size: 18px;
-      margin-top: 30px;
-      border-bottom: 2px solid #e0e0e0;
-      padding-bottom: 5px;
-      color: #444;
-    }
-
-    p {
-      margin: 5px 0;
-      color: #555;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      page-break-inside: auto;
-    }
-
-    th,
-    td {
-      border: 1px solid #e0e0e0;
-      padding: 12px 15px;
-      text-align: left;
-      font-size: 14px;
-    }
-
-    th {
-      background-color: #f5f5f5;
-      color: #555;
-    }
-
-    .right {
-      text-align: right;
-    }
-
-     .total {
-      margin-top: 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      font-size: 16px;
-      color: #333;
-    }
-
-    .total-row {
-      display: flex;
-      justify-content: flex-end;
-      gap: 25px;
-      margin-bottom: 10px;
-    }
-
-    .total-row .label {
-      text-align: right;
-      min-width: 220px;
-      color: #555;
-    }
-
-    .total-row .amount {
-      text-align: left;
-      min-width: 120px;
-      color: #333;
-    }
-
-    .total-bold .amount,
-    .total-bold .label {
-      font-weight: 700;
-      font-size: 18px;
-    }
-
-    .signatures {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 50px;
-      padding-top: 20px;
-      border-top: 2px solid #e0e0e0;
-      page-break-inside: avoid;
-    }
-
-    .signature {
-      width: 45%;
-      text-align: center;
-      padding-top: 10px;
-      padding-bottom: 30px;
-      font-size: 14px;
-      margin-top: 20px;
-      color: #555;
-    }
   </style>
 </head>
 
-<!-- <body>
-  <div class="container">
-    <div class="header">
-      <img src="data:image/png;base64,<%= logoBase64 %>" alt="Logo" width="100">
-      <div class="facture-info">
-        <p>Facture n° <%= facture._id %>
-        </p>
-        <p>Date : <%= new Date().toLocaleDateString('fr-FR') %>
-        </p>
-      </div>
-    </div>
-
-    <h1>FACTURE</h1>
-
-    <h3>Informations du client</h3>
-    <p>Nom : <%= facture.id_client.nom %>
-    </p>
-    <p>Email : <%= facture.id_client.email %>
-    </p>
-    <p>Contact : <%= facture.id_client.contact %>
-    </p>
-
-    <h3>Informations du véhicule</h3>
-    <p>Modèle : <%= facture.id_vehicule.modele %>
-    </p>
-    <p>Numéro : <%= facture.id_vehicule.numero %>
-    </p>
-
-    <h3>Services</h3>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Référence</th>
-          <th>Durée</th>
-          <th>Prix</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% facture.services.forEach((service)=> { %>
-          <tr>
-            <td>
-              <%= service.nom %>
-            </td>
-            <td>
-              <%= service.duree %> min
-            </td>
-            <td class="right">
-              <%= service.prix.toLocaleString('fr-FR') %> MGA
-            </td>
-          </tr>
-          <% }) %>
-      </tbody>
-    </table>
-
-    <h3>Articles</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Article</th>
-          <th>Qté</th>
-          <th>Prix Unitaire</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% facture.articles.forEach((a)=> { %>
-          <tr>
-            <td>
-              <%= a.id_article.nom %>
-            </td>
-            <td>
-              <%= a.nbr_article %>
-            </td>
-            <td class="right">
-              <%= a.id_article.prix.toLocaleString('fr-FR') %> MGA
-            </td>
-            <td class="right">
-              <%= (a.id_article.prix * a.nbr_article).toLocaleString('fr-FR') %> MGA
-            </td>
-          </tr>
-          <% }) %>
-      </tbody>
-    </table>
-
-    <div class="total">
-      <div class="total-row">
-        <span class="label">Total des services :</span>
-        <span class="amount">
-          <%= totalService.toLocaleString('fr-FR') %> MGA
-        </span>
-      </div>
-      <div class="total-row">
-        <span class="label">Total des articles :</span>
-        <span class="amount">
-          <%= totalArticles.toLocaleString('fr-FR') %> MGA
-        </span>
-      </div>
-
-      <div class="total-row total-bold">
-        <span class="label">Total à payer :</span>
-        <span class="amount">
-          <%= totalGlobal.toLocaleString('fr-FR') %> MGA
-        </span>
-      </div>
-    </div>
-
-    <div class="signatures">
-      <div class="signature">Signature du client</div>
-      <div class="signature">Signature de la société</div>
-    </div>
-
-  </div>
-</body> -->
-
 <body>
-   <div class="container">
+  <div class="container">
     <div class="header">
       <img src="data:image/png;base64,<%= logoBase64 %>" alt="Logo" width="100">
       <div class="facture-info">
@@ -521,11 +266,21 @@
       </div>
     </div>
 
-    <div class="signatures">
-      <div class="signature">Signature du client</div>
-      <div class="signature">Signature de la société</div>
-    </div>
+    <table
+      style="width: 100%; margin-top: 50px; border-top: 2px solid #e0e0e0; padding-top: 20px; page-break-inside: avoid;">
+      <tr>
+        <td style="width: 50%; text-align: center; padding-top: 30px; font-size: 14px; color: #555;">
+          Signature du client
+        </td>
+        <td style="width: 50%; text-align: center; padding-top: 30px; font-size: 14px; color: #555;">
+          Signature de la société
+        </td>
+      </tr>
+    </table>
   </div>
 </body>
+
+
+
 
 </html>
