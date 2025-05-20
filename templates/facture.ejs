@@ -31,7 +31,7 @@
       background: white;
       padding: 40px;
       border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
     }
 
     .header {
@@ -66,9 +66,6 @@
       margin: 0;
     }
 
-    .column {
-      width: 48%;
-    }
 
     h3 {
       font-size: 18px;
@@ -90,14 +87,28 @@
       border-spacing: 0;
       margin-top: 20px;
       page-break-inside: auto;
-      border: 1px solid #e0e0e0;
+      /* border: 1px solid #e0e0e0; */
+      overflow: hidden;
+    }
+
+    .table-info {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 20px;
+      page-break-inside: auto;
+      /* border: 1px solid #e0e0e0; */
       border-radius: 8px;
       overflow: hidden;
     }
 
+
+
     th,
     td {
       /* border: 1px solid #e0e0e0; */
+      border: none;
+      border-bottom: 1px solid lightgray;
       padding: 12px 12px;
       text-align: left;
       font-size: 13px;
@@ -130,6 +141,7 @@
       justify-content: flex-end;
       gap: 25px;
       margin-bottom: 10px;
+      text-align: end;
     }
 
     .total-row .label {
@@ -198,7 +210,7 @@
     </p>
 
     <h3>Services</h3>
-    <table>
+    <table class="table-info">
       <thead>
         <tr>
           <th>Référence</th>
@@ -224,74 +236,75 @@
     </table>
 
     <div class="page-break"></div>
-    <% if (facture.articles && facture.articles.length > 0) { %>
-    <h3>Articles</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Article</th>
-          <th>Qté</th>
-          <th>Prix Unitaire</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% facture.articles.forEach((a)=> { %>
+    <% if (facture.articles && facture.articles.length> 0) { %>
+      <h3>Articles</h3>
+      <table class="table-info">
+        <thead>
           <tr>
-            <td>
-              <%= a.id_article.nom %>
+            <th>Article</th>
+            <th>Qté</th>
+            <th>Prix Unitaire</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% facture.articles.forEach((a)=> { %>
+            <tr>
+              <td>
+                <%= a.id_article.nom %>
+              </td>
+              <td>
+                <%= a.nbr_article %>
+              </td>
+              <td class="right">
+                <%= a.id_article.prix.toLocaleString('fr-FR') %> MGA
+              </td>
+              <td class="right">
+                <%= (a.id_article.prix * a.nbr_article).toLocaleString('fr-FR') %> MGA
+              </td>
+            </tr>
+            <% }) %>
+        </tbody>
+      </table>
+      <% } %>
+
+        <!-- TOTAL -->
+        <div class="total">
+          <div class="total-row">
+            <span class="label">Total des services :</span>
+            <span class="amount">
+              <%= totalService.toLocaleString('fr-FR') %> MGA
+            </span>
+          </div>
+          <% if (facture.articles && facture.articles.length> 0) { %>
+            <div class="total-row">
+              <span class="label">Total des articles :</span>
+              <span class="amount">
+                <%= totalArticles.toLocaleString('fr-FR') %> MGA
+              </span>
+            </div>
+            <% } %>
+              <div class="total-row total-bold">
+                <span class="label">Total à payer :</span>
+                <span class="amount">
+                  <%= totalGlobal.toLocaleString('fr-FR') %> MGA
+                </span>
+              </div>
+        </div>
+
+        <table
+          style="width: 100%; margin-top: 50px; border-collapse: separate; border-spacing: 40px 0; page-break-inside: avoid;">
+          <tr>
+            <td
+              style="width: 50%; text-align: center; padding-top: 30px; font-size: 14px; color: #555; border-bottom: 2px solid #e0e0e0;">
+              Signature du client
             </td>
-            <td>
-              <%= a.nbr_article %>
-            </td>
-            <td class="right">
-              <%= a.id_article.prix.toLocaleString('fr-FR') %> MGA
-            </td>
-            <td class="right">
-              <%= (a.id_article.prix * a.nbr_article).toLocaleString('fr-FR') %> MGA
+            <td
+              style="width: 50%; text-align: center; padding-top: 30px; font-size: 14px; color: #555; border-bottom: 2px solid #e0e0e0;">
+              Signature de la société
             </td>
           </tr>
-          <% }) %>
-      </tbody>
-    </table>
-    <% } %>
-
-    <!-- TOTAL -->
-    <div class="total">
-      <div class="total-row">
-        <span class="label">Total des services :</span>
-        <span class="amount">
-          <%= totalService.toLocaleString('fr-FR') %> MGA
-        </span>
-      </div>
-      <% if (facture.articles && facture.articles.length > 0) { %>
-      <div class="total-row">
-        <span class="label">Total des articles :</span>
-        <span class="amount">
-          <%= totalArticles.toLocaleString('fr-FR') %> MGA
-        </span>
-      </div>
-      <% } %>
-      <div class="total-row total-bold">
-        <span class="label">Total à payer :</span>
-        <span class="amount">
-          <%= totalGlobal.toLocaleString('fr-FR') %> MGA
-        </span>
-      </div>
-    </div>
-
-    <table style="width: 100%; margin-top: 50px; border-collapse: collapse; page-break-inside: avoid; border: none;">
-      <tr>
-        <td
-          style="width: 50%; text-align: center; padding-top: 30px; font-size: 14px; color: #555; border-bottom: 2px solid #e0e0e0;">
-          Signature du client
-        </td>
-        <td
-          style="width: 50%; text-align: center; padding-top: 30px; font-size: 14px; color: #555; border-bottom: 2px solid #e0e0e0;">
-          Signature de la société
-        </td>
-      </tr>
-    </table>
+        </table>
   </div>
 </body>
 
