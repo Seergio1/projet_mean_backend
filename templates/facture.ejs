@@ -85,22 +85,30 @@
 
     table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
       margin-top: 20px;
       page-break-inside: auto;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
     }
 
     th,
     td {
       border: 1px solid #e0e0e0;
-      padding: 12px 15px;
+      padding: 12px 12px;
       text-align: left;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     th {
       background-color: #f5f5f5;
       color: #555;
+    }
+
+    .page-break {
+      page-break-before: always;
     }
 
     .right {
@@ -112,7 +120,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      font-size: 16px;
+      font-size: 14px;
       color: #333;
     }
 
@@ -138,7 +146,7 @@
     .total-bold .amount,
     .total-bold .label {
       font-weight: 700;
-      font-size: 18px;
+      font-size: 16px;
     }
 
     .signatures {
@@ -183,7 +191,7 @@
     </p>
 
     <h3>Informations du véhicule</h3>
-    <p>Modèle : <%= facture.id_vehicule.modele %>
+    <p>Modèle : <%= facture.id_vehicule.id_modele.nom %>
     </p>
     <p>Numéro : <%= facture.id_vehicule.numero %>
     </p>
@@ -213,6 +221,8 @@
           <% }) %>
       </tbody>
     </table>
+
+    <div class="page-break"></div>
 
     <h3>Articles</h3>
     <table>
@@ -266,13 +276,14 @@
       </div>
     </div>
 
-    <table
-      style="width: 100%; margin-top: 50px; border-top: 2px solid #e0e0e0; padding-top: 20px; page-break-inside: avoid;">
+    <table style="width: 100%; margin-top: 50px; border-collapse: collapse; page-break-inside: avoid;">
       <tr>
-        <td style="width: 50%; text-align: center; padding-top: 30px; font-size: 14px; color: #555;">
+        <td
+          style="width: 50%; text-align: center; padding-top: 30px; font-size: 14px; color: #555; border-bottom: 2px solid #e0e0e0;">
           Signature du client
         </td>
-        <td style="width: 50%; text-align: center; padding-top: 30px; font-size: 14px; color: #555;">
+        <td
+          style="width: 50%; text-align: center; padding-top: 30px; font-size: 14px; color: #555; border-bottom: 2px solid #e0e0e0;">
           Signature de la société
         </td>
       </tr>
