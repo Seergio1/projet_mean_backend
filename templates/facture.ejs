@@ -47,7 +47,7 @@
     }
 
     .logo {
-      height: 100px;
+      height: 114px;
       width: auto;
       max-width: 100%;
     }
@@ -73,13 +73,14 @@
     h3 {
       font-size: 18px;
       margin-top: 30px;
-      border-bottom: 2px solid #e0e0e0;
+      border-bottom: 1px solid #673bb4;
       padding-bottom: 5px;
       color: #444;
     }
 
     p {
       margin: 5px 0;
+      font-size: 13px;
       color: #555;
     }
 
@@ -96,7 +97,7 @@
 
     th,
     td {
-      border: 1px solid #e0e0e0;
+      /* border: 1px solid #e0e0e0; */
       padding: 12px 12px;
       text-align: left;
       font-size: 13px;
@@ -173,7 +174,7 @@
 <body>
   <div class="container">
     <div class="header">
-      <img src="data:image/png;base64,<%= logoBase64 %>" alt="Logo" width="100">
+      <img src="data:image/png;base64,<%= logoBase64 %>" alt="Logo" width="100" class="logo">
       <div class="facture-info">
         <p>Facture n° <%= facture._id %>
         </p>
@@ -223,7 +224,7 @@
     </table>
 
     <div class="page-break"></div>
-
+    <% if (facture.articles && facture.articles.length > 0) { %>
     <h3>Articles</h3>
     <table>
       <thead>
@@ -253,6 +254,7 @@
           <% }) %>
       </tbody>
     </table>
+    <% } %>
 
     <!-- TOTAL -->
     <div class="total">
@@ -262,12 +264,14 @@
           <%= totalService.toLocaleString('fr-FR') %> MGA
         </span>
       </div>
+      <% if (facture.articles && facture.articles.length > 0) { %>
       <div class="total-row">
         <span class="label">Total des articles :</span>
         <span class="amount">
           <%= totalArticles.toLocaleString('fr-FR') %> MGA
         </span>
       </div>
+      <% } %>
       <div class="total-row total-bold">
         <span class="label">Total à payer :</span>
         <span class="amount">
@@ -276,7 +280,7 @@
       </div>
     </div>
 
-    <table style="width: 100%; margin-top: 50px; border-collapse: collapse; page-break-inside: avoid;">
+    <table style="width: 100%; margin-top: 50px; border-collapse: collapse; page-break-inside: avoid; border: none;">
       <tr>
         <td
           style="width: 50%; text-align: center; padding-top: 30px; font-size: 14px; color: #555; border-bottom: 2px solid #e0e0e0;">
