@@ -174,10 +174,11 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
-    .top-section {
+    .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 30px;
     }
 
     .facture-title {
@@ -205,12 +206,6 @@
       margin: 0;
     }
 
-    .info-section {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 30px;
-    }
-
     .column {
       width: 48%;
     }
@@ -221,6 +216,11 @@
       border-bottom: 2px solid #e0e0e0;
       padding-bottom: 5px;
       color: #444;
+    }
+
+    p {
+      margin: 5px 0;
+      color: #555;
     }
 
     table {
@@ -247,23 +247,38 @@
       text-align: right;
     }
 
-    .total {
-      margin-top: 30px;
-      padding-top: 10px;
-      border-top: 2px solid black;
+     .total {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 16px;
+      color: #333;
     }
 
     .total-row {
       display: flex;
-      justify-content: space-between;
-      margin: 5px 0;
-      font-size: 16px;
+      justify-content: flex-end;
+      gap: 25px;
+      margin-bottom: 10px;
     }
 
-    .total-bold {
-      font-weight: bold;
-      border-top: 1px solid #000;
-      padding-top: 10px;
+    .total-row .label {
+      text-align: right;
+      min-width: 220px;
+      color: #555;
+    }
+
+    .total-row .amount {
+      text-align: left;
+      min-width: 120px;
+      color: #333;
+    }
+
+    .total-bold .amount,
+    .total-bold .label {
+      font-weight: 700;
+      font-size: 18px;
     }
 
     .signatures {
@@ -404,36 +419,29 @@
 
 <body>
    <div class="container">
-    <div class="top-section">
-      <h1 class="facture-title">FACTURE</h1>
-      <img src="data:image/png;base64,<%= logoBase64 %>" alt="Logo" class="logo">
-    </div>
-
-    <div class="facture-info">
-      <p>Facture n° <%= facture._id %>
-      </p>
-      <p>Date : <%= new Date().toLocaleDateString('fr-FR') %>
-      </p>
-    </div>
-
-    <div class="info-section">
-      <div class="column">
-        <h3>Client</h3>
-        <p>Nom : <%= facture.id_client.nom %>
+    <div class="header">
+      <img src="data:image/png;base64,<%= logoBase64 %>" alt="Logo" width="100">
+      <div class="facture-info">
+        <p>Facture n° <%= facture._id %>
         </p>
-        <p>Email : <%= facture.id_client.email %>
-        </p>
-        <p>Contact : <%= facture.id_client.contact %>
-        </p>
-      </div>
-      <div class="column">
-        <h3>Véhicule</h3>
-        <p>Modèle : <%= facture.id_vehicule.modele %>
-        </p>
-        <p>Numéro : <%= facture.id_vehicule.numero %>
+        <p>Date : <%= new Date().toLocaleDateString('fr-FR') %>
         </p>
       </div>
     </div>
+
+    <h3>Informations du client</h3>
+    <p>Nom : <%= facture.id_client.nom %>
+    </p>
+    <p>Email : <%= facture.id_client.email %>
+    </p>
+    <p>Contact : <%= facture.id_client.contact %>
+    </p>
+
+    <h3>Informations du véhicule</h3>
+    <p>Modèle : <%= facture.id_vehicule.modele %>
+    </p>
+    <p>Numéro : <%= facture.id_vehicule.numero %>
+    </p>
 
     <h3>Services</h3>
     <table>
